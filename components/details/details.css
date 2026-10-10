@@ -1,0 +1,258 @@
+/* ==========================================================================
+   The Details
+   ========================================================================== */
+
+.details {
+  padding-top: clamp(40px, 6vw, 80px);
+}
+
+.details-head {
+  position: relative;
+  margin-bottom: clamp(36px, 6vw, 76px);
+}
+.details-cross {
+  right: 0;
+  top: 0;
+}
+
+/* Mobile: one column. Desktop: 12-column editorial grid. */
+.details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(48px, 7vw, 96px) 48px;
+}
+
+@media (min-width: 1000px) {
+  .details-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .details-facts,
+  .details-rules {
+    grid-column: 1 / span 6;
+  }
+  .details-timeline,
+  .details-judging {
+    grid-column: 8 / span 5;
+  }
+  .details-prizes {
+    grid-column: 1 / -1;
+  }
+}
+
+.details-sub {
+  margin: 0 0 22px;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* ---------- date / venue / participation ---------- */
+
+.details-facts {
+  margin: 0;
+}
+.fact {
+  padding: 16px 0 22px;
+  border-top: 2px solid var(--ink);
+}
+.fact:last-child {
+  border-bottom: 2px solid var(--ink);
+}
+.fact dd {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5.6vw, 4rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Supporting lines under a fact (eligibility, fee, what to bring). */
+.fact .fact-note {
+  margin-top: 8px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-transform: none;
+}
+.fact dd + .fact-note {
+  margin-top: 14px;
+}
+.fact .fact-note + .fact-note {
+  margin-top: 4px;
+}
+
+/* ---------- timeline ---------- */
+
+.timeline {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The vertical line the stamps sit on. */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: var(--ink);
+}
+.timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 11px 0;
+}
+
+/* Rubber-stamp marker: double ring, slightly off-square. */
+.stamp {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow:
+    inset 0 0 0 3px var(--paper),
+    inset 0 0 0 4px var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1;
+  rotate: -7deg;
+}
+.timeline li:nth-child(even) .stamp {
+  rotate: 5deg;
+}
+.timeline li:nth-child(3n) .stamp {
+  rotate: -3deg;
+}
+
+.timeline-time {
+  display: block;
+  min-height: 1.5rem;
+  margin-bottom: 3px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.timeline-item {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+/* ---------- rules ---------- */
+
+.rules {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rules li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+.rules-num {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.5rem; /* matches the first text line */
+}
+.rules p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.rules .tbd-tag {
+  margin-right: 6px;
+}
+
+/* ---------- judging bars ---------- */
+
+.bars {
+  display: grid;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.bar-head b {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1;
+}
+.bar-track {
+  position: relative;
+  height: 14px;
+  margin: 9px 12px 0 0; /* room for the brush end at 100% */
+  background: rgb(10 10 10 / 0.1);
+}
+.bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink);
+}
+/* Blue brush dab where the stroke ends. */
+.bar-fill::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  right: -8px;
+  bottom: -7px;
+  width: 15px;
+  background: var(--royal);
+  clip-path: polygon(18% 0, 100% 6%, 84% 100%, 0 92%);
+  rotate: 8deg;
+}
+.bars-total {
+  margin-top: 20px;
+}
+
+/* ---------- prizes ---------- */
+
+.prizes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.prizes .details-sub {
+  margin: 0;
+}
+
+/* ---------- call to action ---------- */
+
+.details-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(56px, 8vw, 110px);
+}
+/* Comfortable tap target on phones. */
+.details-cta .register {
+  min-height: 48px;
+}

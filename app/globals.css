@@ -1,0 +1,849 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens
+   ========================================================================== */
+
+@theme inline {
+  --color-paper: #efece6;
+  --color-ink: #0a0a0a;
+  --color-royal: #1f3bff;
+  --color-sun: #ffd21f;
+
+  --font-display: var(--font-anton), "Arial Narrow", Impact, sans-serif;
+  --font-brush: var(--font-marker), "Comic Sans MS", cursive;
+  --font-sans: var(--font-montserrat), "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  --paper: #efece6;
+  --ink: #0a0a0a;
+  --royal: #1f3bff;
+  --sun: #ffd21f;
+
+  /* Fine paper grain: an SVG noise tile, black with noise-driven alpha. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .5 0 0 0 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+/* ==========================================================================
+   Hero shell
+   The section is 3 screens tall; .hero-pin is sticky, so the hero stays
+   pinned for 2 screens of scrolling (see the ScrollTrigger in Hero.tsx).
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  height: 300svh;
+}
+
+/* prefers-reduced-motion: no pinning, just one static screen. */
+.hero--static {
+  height: 100svh;
+}
+
+.hero-pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--paper);
+  isolation: isolate;
+
+  /* The box the statue and its collage are built in. */
+  --stage: min(46vw, 78svh);
+  --stage-x: 73%;
+  --stage-y: 50%;
+}
+
+.svg-defs {
+  position: absolute;
+}
+
+/* ---------- paper: grain + blueprint grid ---------- */
+
+.hero-paper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--grain);
+  background-size: 240px 240px;
+}
+
+.hero-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgb(31 59 255 / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(31 59 255 / 0.1) 1px, transparent 1px),
+    linear-gradient(to right, rgb(31 59 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(31 59 255 / 0.05) 1px, transparent 1px);
+  background-size:
+    220px 220px,
+    220px 220px,
+    44px 44px,
+    44px 44px;
+  background-position: center;
+  /* Fade the grid out toward the middle so it never fights the copy. */
+  mask-image: radial-gradient(ellipse at 40% 45%, rgb(0 0 0 / 0.25), #000 75%);
+}
+
+/* ---------- torn black corners ---------- */
+
+.torn {
+  position: absolute;
+  z-index: 0;
+  width: clamp(120px, 20vw, 340px);
+  height: clamp(100px, 24svh, 260px);
+  will-change: transform;
+}
+
+.torn svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.22));
+}
+
+.torn--tl {
+  top: -14px;
+  left: -14px;
+}
+.torn--tr {
+  top: -14px;
+  right: -14px;
+  width: clamp(80px, 11vw, 190px);
+  height: clamp(70px, 15svh, 160px);
+}
+.torn--bl {
+  bottom: -14px;
+  left: -14px;
+  width: clamp(80px, 12vw, 210px);
+  height: clamp(70px, 17svh, 180px);
+}
+.torn--br {
+  right: -14px;
+  bottom: -14px;
+  width: clamp(110px, 16vw, 280px);
+}
+.torn--tr svg {
+  transform: scaleX(-1);
+}
+.torn--bl svg {
+  transform: scaleY(-1);
+}
+.torn--br svg {
+  transform: scale(-1);
+}
+
+/* ==========================================================================
+   Stage: the collage around the statue
+   ========================================================================== */
+
+.stage {
+  position: absolute;
+  left: calc(var(--stage-x) - var(--stage) / 2);
+  top: calc(var(--stage-y) - var(--stage) / 2);
+  width: var(--stage);
+  height: var(--stage);
+  transform-origin: 50% 40%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.stage--back {
+  z-index: 1;
+}
+.stage--front {
+  z-index: 3;
+}
+
+.layer {
+  position: absolute;
+  will-change: transform;
+}
+
+.layer > i,
+.layer > .circle {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Big yellow circle behind the head. */
+.circle-layer {
+  left: 27%;
+  top: 4%;
+  width: 64%;
+  aspect-ratio: 1;
+}
+.circle {
+  border-radius: 50%;
+  background: var(--sun);
+}
+
+/* Paper scraps. clip-path gives each a hand-cut silhouette. */
+.shard--black-left {
+  left: 12%;
+  top: 30%;
+  width: 34%;
+  height: 30%;
+}
+.shard--black-left > i {
+  background: var(--ink);
+  clip-path: polygon(8% 12%, 62% 0, 100% 34%, 86% 100%, 30% 88%, 0 52%);
+}
+
+.shard--black-base {
+  left: 8%;
+  top: 73%;
+  width: 88%;
+  height: 22%;
+}
+.shard--black-base > i {
+  background: var(--ink);
+  clip-path: polygon(0 22%, 34% 8%, 62% 30%, 100% 0, 96% 78%, 58% 100%, 20% 84%, 4% 96%);
+}
+
+.shard--blue {
+  left: 3%;
+  top: 58%;
+  width: 20%;
+  height: 26%;
+}
+.shard--blue > i {
+  background: var(--royal);
+  clip-path: polygon(10% 0, 100% 8%, 88% 100%, 0 86%);
+}
+
+.shard--yellow {
+  left: 70%;
+  top: 66%;
+  width: 20%;
+  height: 13%;
+}
+.shard--yellow > i {
+  background: var(--sun);
+  clip-path: polygon(0 10%, 96% 0, 100% 92%, 6% 100%);
+}
+
+/* Halftone dot grid. */
+.dots {
+  left: -8%;
+  top: 68%;
+  width: 22%;
+  height: 22%;
+}
+.dots > i {
+  background-image: radial-gradient(var(--ink) 1.3px, transparent 1.6px);
+  background-size: 12px 12px;
+}
+
+/* Design-tool selection box, as on the poster. */
+.marquee {
+  left: 10%;
+  top: 1%;
+  width: 28%;
+  height: 25%;
+}
+.marquee > i {
+  border: 1.5px solid var(--ink);
+  background:
+    linear-gradient(var(--ink), var(--ink)) 0 0 / 7px 7px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) 100% 0 / 7px 7px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) 0 100% / 7px 7px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) 100% 100% / 7px 7px no-repeat;
+  margin: -4px;
+  background-origin: border-box;
+}
+
+/* ---------- lightbulb ---------- */
+
+.bulb-layer {
+  left: 92%;
+  top: 47%;
+  width: 14%;
+}
+.bulb {
+  position: relative;
+}
+.bulb svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.bulb-glow {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  width: 260%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(255 210 31 / 0.75), rgb(255 210 31 / 0.25) 38%, transparent 68%);
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 0.5s ease-out,
+    scale 0.7s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.bulb-glass {
+  fill: rgb(255 255 255 / 0.55);
+  transition: fill 0.35s ease-out;
+}
+.bulb-rays {
+  opacity: 0;
+  transition: opacity 0.3s ease-out 0.15s;
+}
+.is-lit .bulb-glow {
+  opacity: 1;
+  scale: 1;
+  animation: bulb-pulse 3.2s ease-in-out 0.8s infinite;
+}
+.is-lit .bulb-glass {
+  fill: #ffe46b;
+}
+.is-lit .bulb-rays {
+  opacity: 1;
+}
+
+@keyframes bulb-pulse {
+  50% {
+    opacity: 0.72;
+  }
+}
+
+/* ---------- clouds ---------- */
+
+.cloud-layer {
+  width: 46%;
+}
+.cloud-layer--top {
+  left: 34%;
+  top: -3%;
+}
+.cloud-layer--left {
+  left: -12%;
+  top: 37%;
+  width: 52%;
+}
+.cloud {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+/* ---------- static stand-in when the 3D statue cannot load ---------- */
+
+.fallback-slice {
+  left: 2%;
+  top: 30%;
+  width: 96%;
+  height: 26%;
+  rotate: -17deg;
+  background: #f6f3ec;
+  clip-path: polygon(0 18%, 12% 4%, 31% 12%, 52% 0, 74% 9%, 100% 2%, 97% 88%, 80% 100%, 58% 90%, 36% 100%, 15% 91%, 2% 100%);
+  filter: drop-shadow(0 10px 16px rgb(0 0 0 / 0.25));
+}
+.fallback-slice > i {
+  background: url("/textures/mountain.jpg") center 58% / cover;
+  filter: grayscale(1) brightness(1.25) contrast(1.45);
+  clip-path: polygon(1% 26%, 13% 13%, 30% 21%, 52% 9%, 73% 18%, 99% 11%, 96% 80%, 80% 91%, 58% 82%, 37% 92%, 15% 83%, 3% 90%);
+}
+
+/* ==========================================================================
+   Canvas + overlays
+   ========================================================================== */
+
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* White burst when the band wipes in. */
+.hero-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background: #fffdf2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Last frame of the scroll: the same photo, same grade as the shader, full bleed. */
+.hero-mountain-end {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  background: #1c1e22 url("/textures/mountain.jpg") center / cover;
+  filter: grayscale(1) brightness(1.25) contrast(1.45);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Copy
+   ========================================================================== */
+
+.hero-chrome,
+.hero-copy {
+  position: absolute;
+  z-index: 4;
+}
+
+/* ---------- top bar ---------- */
+
+.hero-topbar {
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: clamp(14px, 3svh, 30px) clamp(18px, 5vw, 76px) 0 clamp(60px, 9vw, 150px);
+}
+
+/* Every logo and divider shares one height, so they sit on one baseline. */
+.hero-logos,
+.hero-logo-row {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(8px, 1.2vw, 18px);
+}
+.hero-logos {
+  --logo-h: clamp(30px, min(6.2svh, 3.5vw), 52px);
+}
+.hero-logos img {
+  flex: none;
+  width: auto;
+  height: var(--logo-h);
+}
+.hero-rule {
+  flex: none;
+  width: 1px;
+  height: var(--logo-h);
+  background: rgb(10 10 10 / 0.55);
+}
+
+.hero-sidenote {
+  margin: 4px 0 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  line-height: 2;
+  text-transform: uppercase;
+}
+
+/* ---------- headline ---------- */
+
+.hero-copy {
+  top: 0;
+  bottom: 0;
+  left: clamp(18px, 5vw, 76px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: min(60vw, 900px);
+  padding-bottom: 6svh;
+  transform-origin: 32% 45%;
+  will-change: transform, opacity;
+
+  --headline: clamp(4.5rem, min(11.2vw, 30svh), 14rem);
+}
+
+.hero-headline {
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  font-size: var(--headline);
+  line-height: 0.86;
+  white-space: nowrap;
+}
+
+.brand-wrap,
+.lab-wrap,
+.brand,
+.lab {
+  display: inline-block;
+}
+
+.brand {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  transform-origin: 40% 60%;
+}
+
+/* Yellow block tucked behind the B. */
+.brand::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -0.09em;
+  top: -0.13em;
+  width: 0.42em;
+  height: 1.02em;
+  background: var(--sun);
+}
+
+/* The wrapper holds the resting tilt + overlap; GSAP animates the inner span. */
+.lab-wrap {
+  position: relative;
+  z-index: 1;
+  margin-left: -0.13em;
+  transform: translateY(-0.1em) rotate(-7deg) skewX(-8deg);
+}
+
+.lab {
+  font-family: var(--font-brush);
+  font-size: 0.98em;
+  line-height: 1;
+  color: var(--royal);
+  filter: url(#brush-streaks);
+  transform-origin: 30% 70%;
+}
+
+/* Quick brush underline. */
+.lab::after {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: -6%;
+  bottom: -0.02em;
+  height: 0.06em;
+  background: var(--royal);
+  border-radius: 50%;
+  rotate: -2deg;
+}
+
+.tagline {
+  margin: clamp(14px, 3svh, 30px) 0 0;
+  font-size: clamp(1rem, 2.1vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+.tagline mark {
+  padding: 0.08em 0.3em 0.12em;
+  margin: 0 0.08em;
+  background: var(--sun);
+  color: inherit;
+  /* Slightly uneven, like a swipe of highlighter. */
+  clip-path: polygon(1% 12%, 99% 0, 100% 90%, 0 100%);
+}
+.tagline em {
+  font-style: italic;
+}
+
+.hero-blurb {
+  position: relative;
+  max-width: 17em;
+  margin: clamp(18px, 4svh, 40px) 0 0;
+  padding-top: clamp(12px, 2.4svh, 22px);
+  font-size: clamp(0.95rem, 1.45vw, 1.35rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+}
+.hero-blurb::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 3px;
+  background: var(--ink);
+}
+
+/* ---------- bottom strip ---------- */
+
+.hero-strip {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 clamp(60px, 9vw, 150px) clamp(16px, 3.6svh, 34px) clamp(18px, 5vw, 76px);
+}
+
+.hero-facts {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hero-facts li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 2px clamp(14px, 2vw, 30px);
+  border-left: 1.5px solid rgb(10 10 10 / 0.7);
+  font-size: clamp(0.72rem, 1vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.hero-facts li:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.hero-facts b {
+  font-weight: 800;
+}
+.hero-facts svg {
+  flex: none;
+  width: clamp(24px, 2.4vw, 34px);
+  height: clamp(24px, 2.4vw, 34px);
+}
+
+/* Black brush-stroke button. */
+.register {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 34px 16px 38px;
+  color: #fff;
+  font-size: clamp(0.95rem, 1.35vw, 1.25rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.register span,
+.register svg {
+  transition: transform 0.25s ease-out;
+}
+.register svg {
+  width: 1.9em;
+  height: 1.9em;
+}
+/* The stroke itself: a block roughened by the #rough-edge filter. */
+.register::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 3px -8px;
+  background: var(--ink);
+  border-radius: 6px 22px 8px 18px / 16px 6px 20px 8px;
+  filter: url(#rough-edge);
+  transition: transform 0.25s ease-out;
+}
+/* Blue swipe underneath. */
+.register::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: 2%;
+  right: -9%;
+  bottom: -5px;
+  height: 7px;
+  background: var(--royal);
+  border-radius: 50%;
+  rotate: -1.5deg;
+  filter: url(#rough-edge);
+}
+.register:hover::before {
+  transform: scale(1.04, 1.1) rotate(-1deg);
+}
+.register:hover svg {
+  transform: translateX(5px);
+}
+.register:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 8px;
+}
+
+/* ==========================================================================
+   Loader
+   ========================================================================== */
+
+.loader {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background-color: var(--paper);
+  background-image: var(--grain);
+  background-size: 240px 240px;
+  will-change: transform;
+}
+
+.loader-label {
+  position: absolute;
+  top: clamp(18px, 4svh, 36px);
+  left: clamp(18px, 5vw, 76px);
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+/* Scan line: black hairline with a yellow edge. Moved by Loader.tsx. */
+.loader-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--ink);
+  box-shadow:
+    0 3px 0 var(--sun),
+    0 10px 28px 6px rgb(255 210 31 / 0.45);
+  will-change: transform;
+}
+
+.loader-readout {
+  position: absolute;
+  left: clamp(18px, 5vw, 76px);
+  bottom: clamp(18px, 5svh, 48px);
+}
+.loader-count {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(5.5rem, min(20vw, 34svh), 17rem);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+.loader-percent {
+  margin-left: 0.06em;
+  font-size: 0.42em;
+  color: var(--royal);
+}
+.loader .tagline {
+  margin-top: 10px;
+  font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+
+/* ==========================================================================
+   Mobile: statue centred under the copy, like the portrait poster
+   ========================================================================== */
+
+@media (max-width: 820px) {
+  .hero-pin {
+    --stage: min(88vw, 44svh);
+    --stage-x: 50%;
+    --stage-y: 60%;
+  }
+
+  .hero-topbar {
+    justify-content: center;
+    padding: 14px 16px 0;
+  }
+  .hero-sidenote {
+    display: none;
+  }
+  /* Two rows: the four IEEE logos, then SUAS underneath. */
+  .hero-logos {
+    --logo-h: min(7.6vw, 30px);
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-logo-row {
+    gap: 9px;
+  }
+  .hero-rule--break {
+    display: none;
+  }
+
+  .hero-copy {
+    left: 0;
+    right: 0;
+    width: auto;
+    justify-content: flex-start;
+    align-items: center;
+    padding: clamp(92px, 13svh, 112px) 16px 0;
+    text-align: center;
+    transform-origin: 50% 20%;
+
+    --headline: min(21.5vw, 17svh);
+  }
+  .tagline {
+    margin-top: 10px;
+    font-size: min(4.3vw, 1.15rem);
+    letter-spacing: 0.1em;
+  }
+  .hero-blurb {
+    max-width: none;
+    margin-top: 8px;
+    padding-top: 0;
+    font-size: min(3.5vw, 0.95rem);
+  }
+  .hero-blurb::before {
+    display: none;
+  }
+
+  .hero-strip {
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 12px 14px;
+  }
+  .hero-facts {
+    width: 100%;
+    justify-content: center;
+  }
+  .hero-facts li {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 10px;
+    font-size: min(2.7vw, 0.72rem);
+    text-align: center;
+  }
+  .hero-facts svg {
+    width: 20px;
+    height: 20px;
+  }
+  .register {
+    padding: 12px 26px 12px 30px;
+    font-size: 0.95rem;
+  }
+
+  .loader-readout {
+    bottom: 22px;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion: nothing ambient moves
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .is-lit .bulb-glow {
+    animation: none;
+  }
+  .bulb-glow,
+  .bulb-glass,
+  .bulb-rays,
+  .register span,
+  .register svg,
+  .register::before {
+    transition: none;
+  }
+}
+
+

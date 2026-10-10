@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Shared pieces for the sections below the hero.
+   Colours and fonts come from the tokens in app/globals.css (docs/DESIGN.md).
+   The paper grain + blueprint grid is the hero's own .hero-paper layer.
+   ========================================================================== */
+
+/* A full-width sheet of paper. Mobile first: 16px gutters. */
+.sheet {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(72px, 12vw, 150px) 16px;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: clip;
+}
+
+.sheet-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .sheet {
+    padding-inline: clamp(32px, 5vw, 76px);
+  }
+}
+
+/* Wide-tracked uppercase label. */
+.eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  line-height: 2;
+  text-transform: uppercase;
+}
+
+.section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 11vw, 8rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+/* Yellow highlight swipe behind a key word. */
+.swipe {
+  position: relative;
+  z-index: 0;
+  display: inline-block;
+  padding: 0 0.08em;
+}
+.swipe-ink {
+  position: absolute;
+  z-index: -1;
+  inset: 6% -3% 0 -3%;
+  background: var(--sun);
+  clip-path: polygon(1% 14%, 99% 0, 100% 88%, 0 100%);
+  rotate: -1.2deg;
+}
+
+/* Torn scrap of lighter paper. The shadow sits on the wrapper because
+   clip-path would cut a box-shadow off. */
+.torn-panel {
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.16));
+}
+.torn-panel-body {
+  height: 100%;
+  padding: clamp(24px, 3.4vw, 40px);
+  background: #f8f6f1;
+}
+
+/* "Not decided yet" marker: a strip of yellow tape. */
+.tbd-tag {
+  display: inline-block;
+  padding: 3px 10px 2px;
+  background: var(--sun);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  vertical-align: middle;
+  rotate: -2deg;
+  clip-path: polygon(0 8%, 100% 0, 98% 100%, 2% 92%);
+}
+.tbd-tag--large {
+  padding: 6px 22px 4px;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+}
+
+.crosshair {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) center / 100% 1.5px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) center / 1.5px 100% no-repeat;
+  opacity: 0.7;
+  pointer-events: none;
+}

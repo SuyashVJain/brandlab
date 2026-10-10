@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import TornEdge from "@/components/how-it-works/TornEdge";
 import { siteContent } from "@/lib/site-content";
 import "@/components/shared/shared.css";
@@ -8,29 +7,7 @@ import "@/components/how-it-works/how-it-works.css"; // styles for the torn stri
 import "./footer.css";
 
 // All text comes from lib/site-content.ts.
-const { footer, logos, contact, credits } = siteContent;
-
-/** Web addresses inside a sentence, without the full stop, comma or bracket that follows them. */
-const URL_PATTERN = /https?:\/\/[^\s)]*[^\s).,]/g;
-
-/** A credit line with every web address in it turned into a real link (new tab). */
-function withLinks(text: string): ReactNode[] {
-  const parts: ReactNode[] = [];
-  let last = 0;
-  for (const match of text.matchAll(URL_PATTERN)) {
-    const url = match[0];
-    const start = match.index;
-    if (start > last) parts.push(text.slice(last, start));
-    parts.push(
-      <a key={start} href={url} target="_blank" rel="noopener noreferrer">
-        {url}
-      </a>,
-    );
-    last = start + url.length;
-  }
-  if (last < text.length) parts.push(text.slice(last));
-  return parts;
-}
+const { footer, logos, contacts, credit } = siteContent;
 
 export default function Footer() {
   return (
@@ -57,20 +34,33 @@ export default function Footer() {
           ))}
         </ul>
 
+        {/* Statue credit (required by its CC BY 4.0 licence): one quiet line under the logos. */}
+        <p className="foot-credit">
+          {credit.map((piece) =>
+            piece.href ? (
+              <a key={piece.text} href={piece.href} target="_blank" rel="noopener noreferrer">
+                {piece.text}
+              </a>
+            ) : (
+              piece.text
+            ),
+          )}
+        </p>
+
         <div className="foot-grid">
           <div>
             <h2 className="eyebrow">{footer.contactHeading}</h2>
-            <p className="foot-contact">
-              {contact.name}, <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-            </p>
-          </div>
-          <div>
-            <h2 className="eyebrow">{footer.creditsHeading}</h2>
-            {credits.map((line) => (
-              <p key={line} className="foot-credit">
-                {withLinks(line)}
-              </p>
-            ))}
+            {/* One row on desktop, two columns on a phone. */}
+            <ul className="foot-contacts">
+              {contacts.map((person) => (
+                <li key={person.name}>
+                  <span className="foot-contact-name">{person.name}</span>
+                  <span className="foot-contact-comma">, </span>
+                  {/* The link dials the number without its spaces. */}
+                  <a href={`tel:${person.phone.replace(/\s/g, "")}`}>{person.phone}</a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

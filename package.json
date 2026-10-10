@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:seed-admin": "node scripts/seed-admin.mjs"
+    "db:seed-admin": "node scripts/seed-admin.mjs",
+    "db:seed-dummy": "node scripts/seed-dummy.mjs",
+    "db:clear-dummy": "node scripts/clear-dummy.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

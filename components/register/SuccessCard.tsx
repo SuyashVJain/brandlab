@@ -54,6 +54,18 @@ export default function SuccessCard({ registration, onClear }: SuccessCardProps)
           <dt className="eyebrow">Entry</dt>
           <dd>{registration.mode === "pair" ? "With a partner" : "Alone"}</dd>
         </div>
+        {registration.program && (
+          <div>
+            <dt className="eyebrow">Programme</dt>
+            <dd>{registration.program}</dd>
+          </div>
+        )}
+        {registration.semester !== undefined && (
+          <div>
+            <dt className="eyebrow">Semester</dt>
+            <dd>Semester {registration.semester}</dd>
+          </div>
+        )}
         {reporting && (
           <div>
             <dt className="eyebrow">On the day</dt>

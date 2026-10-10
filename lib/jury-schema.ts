@@ -8,12 +8,20 @@ import type { StaffRole } from "@/lib/admin-schema";
 
 /* ---------- judging criteria (stored in the `criteria` table, edited in /admin) ---------- */
 
-export type Criterion = { id: number; position: number; label: string; max_points: number };
+export type Criterion = {
+  id: number;
+  position: number;
+  label: string;
+  max_points: number;
+  /** Optional one-line explanation, or null. */
+  description: string | null;
+};
 
 export const MIN_CRITERIA = 3;
 export const MAX_CRITERIA = 8;
 export const CRITERIA_TOTAL = 100;
 export const MAX_CRITERION_LABEL = 80;
+export const MAX_CRITERION_DESCRIPTION = 160;
 
 /** Sent back when judges have already scored: the criteria can no longer change. */
 export const CRITERIA_LOCKED = "Criteria are locked because judges have already saved scores.";
@@ -33,6 +41,11 @@ export const criteriaSchema = z.object({
           .number("Max points must be a number.")
           .int("Max points must be a whole number.")
           .min(1, "Max points must be at least 1."),
+        description: z
+          .string()
+          .trim()
+          .max(MAX_CRITERION_DESCRIPTION, `Descriptions must be ${MAX_CRITERION_DESCRIPTION} characters or fewer.`)
+          .optional(),
       }),
     )
     .min(MIN_CRITERIA, `Use at least ${MIN_CRITERIA} criteria.`)

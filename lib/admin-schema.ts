@@ -50,6 +50,18 @@ export const deadlineSchema = z.object({
   ]),
 });
 
+/** Highest rank that can be revealed on /live. */
+export const MAX_REVEAL_RANK = 200;
+
+export const revealRankSchema = z.object({
+  // 0 hides the reveal.
+  rank: z
+    .number("Enter a whole number.")
+    .int("Enter a whole number.")
+    .min(0, "The rank cannot be negative.")
+    .max(MAX_REVEAL_RANK, `The rank can be ${MAX_REVEAL_RANK} at most.`),
+});
+
 export const keywordsSchema = z.object({
   keywords: z
     .array(
@@ -74,6 +86,23 @@ export type AdminState = {
   submissions_close_at: string | null;
   serverTime: string;
   keywords: string[];
+  /** The rank /live is revealing right now (0 = nothing). */
+  revealed_rank: number;
+  /** Goes up on every reveal save, so the same rank can be replayed. */
+  reveal_nonce: number;
+  /** Submissions at least one judge has scored: the highest rank that exists. */
+  scored_entries: number;
+  /** The full ranking, best first. Admin screens only. */
+  ranking: RankPreview[];
+};
+
+/** One line of the admin-only preview of who holds a rank. */
+export type RankPreview = {
+  rank: number;
+  code: string;
+  event_name: string;
+  name: string;
+  partner: string | null;
 };
 
 /** First validation message, for a single-line error. */

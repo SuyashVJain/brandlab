@@ -537,3 +537,236 @@
 .live-stage .live-flag {
   margin-top: 6px;
 }
+
+/* ==========================================================================
+   Rank reveal (RankReveal): the team at the rank an admin reveals in the
+   results phase. Desktop only; phones keep the standby screen.
+   ========================================================================== */
+
+/* The stage steps back while a rank is up: statue and backdrop shrink slightly, the keywords leave. */
+.live-stage .hero-canvas,
+.live-stage .stage-sides,
+.live-stage .stage-circle,
+.live-stage .live-stage-title {
+  transition:
+    scale 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.5s ease;
+}
+.live-stage.is-ranking .hero-canvas,
+.live-stage.is-ranking .stage-sides,
+.live-stage.is-ranking .stage-circle,
+.live-stage.is-ranking .live-stage-title {
+  scale: 0.93;
+}
+.live-stage.is-ranking .live-revealed,
+.live-stage.is-ranking .live-stage-top,
+.live-stage.is-ranking .live-stage-copy,
+.live-stage.is-ranking .live-stage-reporting,
+.live-stage.is-ranking .live-stage-count {
+  opacity: 0;
+  pointer-events: none;
+}
+/* The bulb stays above the dimmed stage: off until rank 1 lights it. */
+.live-stage.is-ranking .stage-bulb {
+  z-index: 8;
+}
+
+.rank-reveal {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  overflow: hidden;
+}
+.rank-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  opacity: 0.72;
+}
+
+/* Full-bleed torn strip of the mountain photo, behind the numeral and the poster. */
+.rank-strip {
+  position: absolute;
+  left: -14px;
+  right: -14px;
+  top: 40%;
+  height: 26svh;
+  translate: 0 -50%;
+  filter: drop-shadow(0 10px 16px rgb(0 0 0 / 0.22));
+}
+.rank-strip .live-band-paper,
+.rank-strip .live-band-photo {
+  height: 100%;
+}
+.rank-strip .live-band-photo {
+  padding: 0;
+}
+
+.rank-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(28px, 6vw, 110px);
+  padding: 6svh 6vw;
+}
+.rank-side {
+  display: grid;
+  justify-items: center;
+  width: min(44vw, 720px);
+  text-align: center;
+}
+
+/* The numeral over the big yellow circle. */
+.rank-badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(46svh, 30vw);
+  aspect-ratio: 1;
+}
+.rank-circle {
+  position: absolute;
+  inset: 0;
+}
+.rank-numeral {
+  position: relative;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: min(44svh, 28vw);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+.rank-reveal--calm .rank-badge {
+  width: min(36svh, 24vw);
+}
+.rank-reveal--calm .rank-numeral {
+  font-size: min(32svh, 21vw);
+}
+
+.rank-event {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.28em;
+  margin: clamp(14px, 3svh, 30px) 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, min(4.6vw, 9svh), 5.4rem);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.rank-word {
+  display: inline-flex;
+  overflow: hidden;
+  padding: 0.06em 0;
+}
+.rank-letter {
+  display: inline-block;
+}
+.rank-names {
+  margin: clamp(10px, 2svh, 18px) 0 0;
+  padding: 7px 16px 6px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: clamp(0.95rem, 1.4vw, 1.4rem);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: pre-wrap;
+}
+
+/* The poster, pinned at a slight tilt. */
+.rank-poster {
+  position: relative;
+  flex: none;
+  rotate: 3deg;
+  padding: 10px;
+  background: #f8f6f1;
+  box-shadow:
+    0 28px 46px rgb(0 0 0 / 0.26),
+    0 6px 12px rgb(0 0 0 / 0.16);
+}
+.rank-poster img {
+  display: block;
+  width: auto;
+  max-width: 34vw;
+  height: auto;
+  max-height: 68svh;
+}
+.rank-pin {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: -9px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--royal);
+  box-shadow: 0 3px 5px rgb(0 0 0 / 0.35);
+  translate: -50% 0;
+}
+.rank-pdf {
+  display: grid;
+  place-items: center;
+  width: min(30vw, 46svh);
+  aspect-ratio: 3 / 4;
+  padding: 20px;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Paper confetti for rank 1: scraps in the site palette, thrown from the numeral. */
+.rank-confetti {
+  position: absolute;
+  left: 32%;
+  top: 40%;
+  pointer-events: none;
+}
+.rank-confetti > i {
+  position: absolute;
+  width: 16px;
+  height: 22px;
+  background: var(--sun);
+  clip-path: polygon(8% 0, 100% 10%, 90% 100%, 0 88%);
+  opacity: 0;
+  will-change: transform;
+}
+.rank-confetti > i:nth-child(4n + 1) {
+  background: var(--royal);
+}
+.rank-confetti > i:nth-child(4n + 2) {
+  width: 12px;
+  height: 14px;
+  background: var(--ink);
+}
+.rank-confetti > i:nth-child(4n + 3) {
+  width: 20px;
+  height: 14px;
+  background: #f8f6f1;
+}
+.rank-flash {
+  position: absolute;
+  inset: 0;
+  background: #fffdf2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Simple version (reduced motion, or no 3D): the same card on plain paper, faded in. */
+.rank-reveal--simple {
+  position: fixed;
+  z-index: 25;
+  background: var(--paper);
+}
+.rank-reveal--simple .rank-dim,
+.rank-reveal--simple .rank-confetti,
+.rank-reveal--simple .rank-flash {
+  display: none;
+}

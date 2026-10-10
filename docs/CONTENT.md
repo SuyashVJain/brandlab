@@ -69,7 +69,9 @@ Certificates
 - **Who do I contact?** See below.
 
 ## Contacts
-- Coordinator: Suyash Vasal Jain, 9343379736
+- Harshwardhan Trivedi, +91 831 911 4465
+- Yash Upadhyay, +91 84233 13611
+- Suyash Vasal Jain, +91 93433 79736
 - Email: **TBD**
 - Instagram / LinkedIn handle: **TBD**
 

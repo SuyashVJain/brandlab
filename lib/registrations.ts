@@ -21,9 +21,14 @@ export type ParticipantRow = {
   email: string;
   phone: string;
   enrollment_no: string;
-  course_year: string | null;
   partner_name: string | null;
   partner_enrollment_no: string | null;
+  /** Null for entries registered before these fields existed. */
+  program: string | null;
+  semester: number | null;
+  partner_phone: string | null;
+  partner_program: string | null;
+  partner_semester: number | null;
   checked_in: boolean;
   /** ISO time (UTC). */
   created_at: string;

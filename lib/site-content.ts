@@ -21,6 +21,8 @@ export type Fact = {
 
 export type FaqItem = { question: string; answer: string };
 
+export type CreditPiece = { text: string; href?: string };
+
 export const siteContent = {
   howItWorks: {
     sideText: ["Same words,", "different worlds."],
@@ -85,10 +87,12 @@ export const siteContent = {
 
   prizes: "Certificates",
 
-  contact: {
-    name: "Suyash Vasal Jain",
-    phone: "9343379736",
-  },
+  /** Coordinators, in the order they are shown. */
+  contacts: [
+    { name: "Harshwardhan Trivedi", phone: "+91 831 911 4465" },
+    { name: "Yash Upadhyay", phone: "+91 84233 13611" },
+    { name: "Suyash Vasal Jain", phone: "+91 93433 79736" },
+  ],
 
   faqHeading: "FAQ",
 
@@ -107,14 +111,23 @@ export const siteContent = {
       question: "How do I submit?",
       answer: "Through the website, with your event name and poster file, before the deadline.",
     },
-    { question: "Who do I contact?", answer: "Suyash Vasal Jain, 9343379736." },
+    {
+      question: "Who do I contact?",
+      answer:
+        "Harshwardhan Trivedi, +91 831 911 4465. Yash Upadhyay, +91 84233 13611. Suyash Vasal Jain, +91 93433 79736.",
+    },
   ] as FaqItem[],
+
+  /** Fixed choices on the registration form. The form, the server check and the admin screens all read these. */
+  registration: {
+    programs: ["B.Tech CSIT", "B.Tech SAR", "B.Tech AIML", "B.Sc SAR"],
+    semesters: [1, 2, 3, 4, 5, 6, 7, 8],
+  },
 
   /** Footer labels. */
   footer: {
     register: "Register now",
     contactHeading: "Contact",
-    creditsHeading: "Credits",
   },
 
   /** Organiser logos for the footer, in display order (files in public/logos, transparent and trimmed). */
@@ -126,11 +139,19 @@ export const siteContent = {
     { src: "/logos/suas-logo-clean.png", alt: "Symbiosis University of Applied Sciences", width: 1139, height: 240 },
   ],
 
-  /** Footer credits. Web addresses in these lines become links automatically. */
-  credits: [
-    "3D model 'David Head' by 1d_inc (https://sketchfab.com/1d_inc), licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Source: https://skfb.ly/oKvzW. Modified: material and shader effects applied.",
-    "Mountain photo by Pietro Dona on Unsplash.",
-  ],
+  /**
+   * Footer credit for the statue (the CC BY 4.0 licence requires it). One line,
+   * written as pieces: a piece with `href` is a link, shown with that short text.
+   */
+  credit: [
+    { text: "3D model 'David Head' by 1d_inc (" },
+    { text: "sketchfab.com/1d_inc", href: "https://sketchfab.com/1d_inc" },
+    { text: "), " },
+    { text: "CC BY 4.0", href: "https://creativecommons.org/licenses/by/4.0/" },
+    { text: ". Source: " },
+    { text: "skfb.ly/oKvzW", href: "https://skfb.ly/oKvzW" },
+    { text: ". Modified." },
+  ] as CreditPiece[],
 };
 
 /** The three big blocks at the top of the Details section. */

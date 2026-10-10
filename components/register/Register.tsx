@@ -58,7 +58,14 @@ function parseSaved(raw: string | null): RegisterResult | null {
       typeof value.full_name === "string" &&
       (value.mode === "alone" || value.mode === "pair")
     ) {
-      return { code: value.code, full_name: value.full_name, mode: value.mode };
+      return {
+        code: value.code,
+        full_name: value.full_name,
+        mode: value.mode,
+        // Missing on codes saved before these fields existed.
+        program: typeof value.program === "string" ? value.program : undefined,
+        semester: typeof value.semester === "number" ? value.semester : undefined,
+      };
     }
   } catch {
     // Corrupt entry: treat it as absent.

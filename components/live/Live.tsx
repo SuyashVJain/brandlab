@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import TornEdge from "@/components/how-it-works/TornEdge";
 import { siteContent } from "@/lib/site-content";
 import { useMediaQuery } from "@/lib/useMediaQuery";
+import RankReveal from "./RankReveal";
 import Revealed from "./Revealed";
 import { useEventState } from "./useEventState";
 import "@/components/shared/shared.css";
@@ -98,6 +99,14 @@ export default function Live() {
       <div className="hero-paper" aria-hidden />
       <TornEdge />
       <div className="sheet-inner">{view}</div>
+      {/* Desktop without the 3D stage (reduced motion, or WebGL failed): the rank reveal as a simple fade. Phones are unchanged. */}
+      {desktop && (
+        <RankReveal
+          rank={data?.phase === "results" ? (data.revealedRank ?? 0) : 0}
+          nonce={data?.revealNonce ?? 0}
+          mode="simple"
+        />
+      )}
       {reconnecting && (
         <p className="live-note" role="status">
           Reconnecting...

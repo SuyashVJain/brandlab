@@ -11,7 +11,7 @@ const MAX_KEYWORD_LENGTH = 40;
 
 type Notice = { kind: "ok" | "error"; text: string };
 
-/** Event control for admins: phase, keywords, reveal and submission deadline. */
+/** Event control for admins: phase, keywords, reveal, submission deadline and the rank reveal. */
 export default function AdminPanel({ initialState }: { initialState: AdminState }) {
   const router = useRouter();
 
@@ -21,6 +21,7 @@ export default function AdminPanel({ initialState }: { initialState: AdminState 
   const [newWord, setNewWord] = useState("");
   const [keywordError, setKeywordError] = useState("");
   const [deadline, setDeadline] = useState(toIstInput(initialState.submissions_close_at));
+  const [rankDraft, setRankDraft] = useState(String(initialState.revealed_rank || 1));
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
 
@@ -122,6 +123,33 @@ export default function AdminPanel({ initialState }: { initialState: AdminState 
   const clearDeadline = async () => {
     const cleared = await call("deadline", "/api/admin/deadline", "POST", { submissions_close_at: null }, "Deadline cleared.");
     if (cleared) setDeadline("");
+  };
+
+  /* ---------- reveal rank ---------- */
+
+  const scored = state.scored_entries;
+  const inResults = state.phase === "results";
+  const chosenRank = Number(rankDraft);
+  const rankValid = rankDraft.trim() !== "" && Number.isInteger(chosenRank) && chosenRank >= 1 && chosenRank <= scored;
+  // Admin-only preview of who holds the chosen rank.
+  const holder = rankValid ? state.ranking.find((entry) => entry.rank === chosenRank) : undefined;
+  const canRevealRank = inResults && scored > 0 && busy === null;
+
+  const stepRank = (step: -1 | 1) => {
+    const from = rankValid ? chosenRank : state.revealed_rank || (step === 1 ? 0 : scored + 1);
+    setRankDraft(String(Math.min(scored, Math.max(1, from + step))));
+  };
+
+  /** Saving the same rank again replays the reveal on /live. */
+  const revealRank = () => {
+    if (!rankValid) {
+      return setNotice({ kind: "error", text: scored === 0 ? "No entries have been scored yet." : `Enter a rank from 1 to ${scored}.` });
+    }
+    void call("rank", "/api/admin/reveal-rank", "PUT", { rank: chosenRank }, `Rank ${chosenRank} is on /live.`);
+  };
+
+  const hideRank = () => {
+    void call("rank-hide", "/api/admin/reveal-rank", "PUT", { rank: 0 }, "Rank reveal hidden.");
   };
 
   const refresh = async () => {
@@ -269,6 +297,76 @@ export default function AdminPanel({ initialState }: { initialState: AdminState 
             <div>
               <dt className="eyebrow">Saved deadline</dt>
               <dd>{formatIst(state.submissions_close_at)}</dd>
+            </div>
+          </dl>
+        </TornPanel>
+
+        {/* ---------- reveal a rank on /live ---------- */}
+        <TornPanel seed={269} className="adm-reveal-rank">
+          <h2 className="adm-heading">Reveal rank</h2>
+          <p className="adm-text">
+            <b>{scored}</b> scored {scored === 1 ? "entry" : "entries"}. Choose a rank, check the preview, then reveal
+            it on /live. Works only while the phase is &quot;{PHASE_LABEL.results}&quot;.
+          </p>
+          <div className="adm-field">
+            <label htmlFor="adm-rank-input">Rank (1 to {scored})</label>
+            <input
+              id="adm-rank-input"
+              className="adm-input adm-reveal-rank-input"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={Math.max(1, scored)}
+              step={1}
+              value={rankDraft}
+              onChange={(event) => setRankDraft(event.target.value)}
+            />
+          </div>
+          <div className="adm-row">
+            <button type="button" className="adm-button adm-button--small" onClick={() => stepRank(-1)} disabled={scored === 0 || (rankValid && chosenRank <= 1)}>
+              Previous
+            </button>
+            <button type="button" className="adm-button adm-button--small" onClick={() => stepRank(1)} disabled={scored === 0 || (rankValid && chosenRank >= scored)}>
+              Next
+            </button>
+            {[1, 2, 3].map((quick) => (
+              <button
+                key={quick}
+                type="button"
+                className="adm-button adm-button--small"
+                aria-pressed={rankDraft === String(quick)}
+                disabled={quick > scored}
+                onClick={() => setRankDraft(String(quick))}
+              >
+                {quick}
+              </button>
+            ))}
+          </div>
+          <dl className="adm-facts">
+            <div>
+              <dt className="eyebrow">Preview (only you see this)</dt>
+              <dd>
+                {holder
+                  ? `Rank ${holder.rank}: ${holder.event_name} - ${holder.name}${holder.partner ? ` & ${holder.partner}` : ""} (${holder.code})`
+                  : scored === 0
+                    ? "No entries have been scored yet."
+                    : `Enter a rank from 1 to ${scored}.`}
+              </dd>
+            </div>
+          </dl>
+          <div className="adm-row">
+            <button type="button" className="adm-button adm-button--solid" onClick={revealRank} disabled={!canRevealRank}>
+              {busy === "rank" ? "Revealing..." : rankValid && chosenRank === state.revealed_rank ? "Replay on /live" : "Reveal on /live"}
+            </button>
+            <button type="button" className="adm-button" onClick={hideRank} disabled={busy !== null || state.revealed_rank === 0}>
+              {busy === "rank-hide" ? "Hiding..." : "Hide"}
+            </button>
+          </div>
+          {!inResults && <p className="adm-note">Disabled: set the phase to &quot;{PHASE_LABEL.results}&quot; first.</p>}
+          <dl className="adm-facts">
+            <div>
+              <dt className="eyebrow">On /live now</dt>
+              <dd>{state.revealed_rank === 0 || !inResults ? "Nothing (hidden)" : `Rank ${state.revealed_rank}`}</dd>
             </div>
           </dl>
         </TornPanel>

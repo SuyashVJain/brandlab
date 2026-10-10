@@ -1,6 +1,7 @@
 import { adminOnly, readJson } from "@/lib/admin-route";
 import { firstIssue, phaseSchema, REVEAL_DELAY_SECONDS } from "@/lib/admin-schema";
 import { json } from "@/lib/auth";
+import { isMissingColumn } from "@/lib/criteria";
 import { db } from "@/lib/db";
 import { readAdminState } from "@/lib/event-state";
 
@@ -30,6 +31,13 @@ export async function POST(request: Request) {
           end
       where id = 1
     `;
+    // A phase change always hides the rank reveal, so an old rank can never
+    // pop up when the event enters "results". (Columns from migration 006.)
+    try {
+      await db()`update event_state set revealed_rank = 0, reveal_nonce = reveal_nonce + 1 where id = 1`;
+    } catch (error) {
+      if (!isMissingColumn(error)) throw error;
+    }
     return json(await readAdminState());
   });
 }

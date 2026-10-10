@@ -7,6 +7,7 @@ import {
   CRITERIA_TOTAL,
   criteriaSchema,
   MAX_CRITERIA,
+  MAX_CRITERION_DESCRIPTION,
   MAX_CRITERION_LABEL,
   MIN_CRITERIA,
   type CriteriaData,
@@ -15,7 +16,7 @@ import {
 import { callApi } from "./api";
 
 /** One editable row. `key` is stable for React; `id` exists only for saved criteria. */
-type Row = { key: string; id?: number; label: string; points: string };
+type Row = { key: string; id?: number; label: string; points: string; description: string };
 
 const toRows = (criteria: Criterion[]): Row[] =>
   criteria.map((criterion) => ({
@@ -23,6 +24,7 @@ const toRows = (criteria: Criterion[]): Row[] =>
     id: criterion.id,
     label: criterion.label,
     points: String(criterion.max_points),
+    description: criterion.description ?? "",
   }));
 
 /** Admin tab: edit the judging criteria. Read-only once any judge has saved a score. */
@@ -61,14 +63,19 @@ export default function CriteriaPanel() {
 
   const add = () => {
     nextKey.current += 1;
-    setRows([...rows, { key: `new-${nextKey.current}`, label: "", points: "" }]);
+    setRows([...rows, { key: `new-${nextKey.current}`, label: "", points: "", description: "" }]);
     setNotice(null);
   };
 
   const save = async () => {
     if (busy || locked) return;
     const parsed = criteriaSchema.safeParse({
-      criteria: rows.map((row) => ({ id: row.id, label: row.label, max_points: Number(row.points) })),
+      criteria: rows.map((row) => ({
+        id: row.id,
+        label: row.label,
+        max_points: Number(row.points),
+        description: row.description,
+      })),
     });
     if (!parsed.success) return setNotice({ ok: false, text: parsed.error.issues[0].message });
 
@@ -144,6 +151,16 @@ export default function CriteriaPanel() {
               >
                 Remove
               </button>
+              <input
+                className="adm-input adm-crit-desc"
+                type="text"
+                value={row.description}
+                onChange={(event) => change(row.key, { description: event.target.value })}
+                maxLength={MAX_CRITERION_DESCRIPTION}
+                placeholder="One-line description (optional)"
+                aria-label={`Criterion ${index + 1} description`}
+                disabled={locked}
+              />
             </li>
           ))}
         </ol>

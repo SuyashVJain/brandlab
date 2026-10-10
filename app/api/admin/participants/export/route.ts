@@ -12,9 +12,13 @@ const COLUMNS = [
   ["email", "Email"],
   ["phone", "Phone"],
   ["enrollment_no", "Enrollment no"],
-  ["course_year", "Course / year"],
+  ["program", "Programme"],
+  ["semester", "Semester"],
   ["partner_name", "Partner name"],
   ["partner_enrollment_no", "Partner enrollment no"],
+  ["partner_phone", "Partner phone"],
+  ["partner_program", "Partner programme"],
+  ["partner_semester", "Partner semester"],
   ["checked_in", "Checked in"],
   ["created_at", "Registered at (UTC)"],
 ] as const;
@@ -24,8 +28,8 @@ const COLUMNS = [
  * = + - @ (or a tab / carriage return) gets a leading single quote, so a
  * spreadsheet shows it as text instead of running it as a formula.
  */
-function cell(value: string | boolean | null): string {
-  let text = value === null ? "" : typeof value === "boolean" ? (value ? "yes" : "no") : value;
+function cell(value: string | number | boolean | null): string {
+  let text = value === null ? "" : typeof value === "boolean" ? (value ? "yes" : "no") : String(value);
   if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
   return `"${text.replace(/"/g, '""')}"`;
 }

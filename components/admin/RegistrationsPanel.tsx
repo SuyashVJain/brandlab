@@ -146,7 +146,7 @@ export default function RegistrationsPanel() {
           value={q}
           onChange={(event) => setQ(event.target.value)}
           placeholder="Search, or scan / type a code and press Enter"
-          aria-label="Search participants by code, name, email, enrollment number or phone"
+          aria-label="Search participants by code, name, email, enrollment number, phone, programme or semester"
           autoComplete="off"
           autoCapitalize="none"
           spellCheck={false}
@@ -207,18 +207,30 @@ export default function RegistrationsPanel() {
                   <td className="adm-reg-code">{row.code}</td>
                   <td data-label="Name">
                     <b>{row.full_name}</b>
+                    {row.program && (
+                      <span className="adm-reg-sub">
+                        {row.program}
+                        {row.semester !== null && `, Sem ${row.semester}`}
+                      </span>
+                    )}
                     <span className="adm-reg-sub">{row.email}</span>
                   </td>
                   <td data-label="Enrollment">
                     {row.enrollment_no}
-                    {row.course_year && <span className="adm-reg-sub">{row.course_year}</span>}
                   </td>
                   <td data-label="Phone">{row.phone}</td>
                   <td data-label="Partner">
                     {row.partner_name ? (
                       <>
                         {row.partner_name}
+                        {row.partner_program && (
+                          <span className="adm-reg-sub">
+                            {row.partner_program}
+                            {row.partner_semester !== null && `, Sem ${row.partner_semester}`}
+                          </span>
+                        )}
                         <span className="adm-reg-sub">{row.partner_enrollment_no}</span>
+                        {row.partner_phone && <span className="adm-reg-sub">{row.partner_phone}</span>}
                       </>
                     ) : (
                       <span className="adm-reg-sub">Solo</span>

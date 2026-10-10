@@ -62,7 +62,10 @@ function ScoreForm({ criteria, submission, locked, onSaved }: ScoreFormProps) {
     <form className="adm-score" onSubmit={save}>
       {criteria.map((criterion) => (
         <div key={criterion.id} className="adm-score-row">
-          <label htmlFor={`score-${criterion.id}`}>{criterion.label}</label>
+          <label htmlFor={`score-${criterion.id}`}>
+            {criterion.label}
+            {criterion.description && <span className="adm-score-desc">{criterion.description}</span>}
+          </label>
           <input
             id={`score-${criterion.id}`}
             className="adm-range"

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import StatueScene from "@/components/StatueScene";
 import { SvgFilters, TornCorners } from "@/components/TornPaper";
 import { hero, resetHero, SLICE } from "@/lib/heroState";
 import type { PublicEventState } from "@/lib/live";
+import RankReveal from "./RankReveal";
 import Revealed from "./Revealed";
 import { StageBulb, StageSide } from "./SceneArt";
 
@@ -49,6 +50,11 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
   const revealed = Boolean(keywords);
   const counting = !revealed && seconds !== null;
   const atZero = counting && seconds === 0;
+
+  // Results phase: an admin is revealing a rank. The stage steps back and RankReveal plays over it.
+  const rank = data?.phase === "results" ? (data.revealedRank ?? 0) : 0;
+  const ranking = rank > 0;
+  const [spotlight, setSpotlight] = useState(false);
 
   // Finished hero pose: solid marble, band across the eyes, no loader, no scroll zoom.
   useEffect(() => {
@@ -134,7 +140,7 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
   }, [atZero]);
 
   return (
-    <div ref={root} className={`live-stage${revealed ? " is-revealed" : ""}${counting ? " is-counting" : ""}`}>
+    <div ref={root} className={`live-stage${revealed ? " is-revealed" : ""}${counting ? " is-counting" : ""}${ranking ? " is-ranking" : ""}`}>
       <SvgFilters />
       <div className="hero-paper" aria-hidden />
       <TornCorners />
@@ -147,7 +153,7 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
         <StageSide />
         <StageSide mirrored />
       </div>
-      <div className="stage-bulb is-lit" data-depth="0.6" aria-hidden>
+      <div className={`stage-bulb${!ranking || spotlight ? " is-lit" : ""}`} data-depth="0.6" aria-hidden>
         <StageBulb />
       </div>
 
@@ -213,6 +219,9 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
           variant="tear"
         />
       )}
+
+      {/* ---------- rank reveal (results phase) ---------- */}
+      <RankReveal rank={rank} nonce={data?.revealNonce ?? 0} mode="stage" onSpotlight={setSpotlight} />
 
       <div ref={flash} className="live-flash" aria-hidden />
     </div>

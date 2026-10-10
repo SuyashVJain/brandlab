@@ -1,4 +1,5 @@
 import { NeonDbError } from "@neondatabase/serverless";
+import { isMissingColumn } from "@/lib/criteria";
 import { db } from "@/lib/db";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { fieldErrors, registerSchema, type RegisterResult } from "@/lib/register-schema";
@@ -11,6 +12,7 @@ import { fieldErrors, registerSchema, type RegisterResult } from "@/lib/register
  *   403  phase is not 'registration'  { error }
  *   409  email / enrollment clash     { error, field }
  *   429  rate limited                 { error }
+ *   503  migration 007 not applied    { error }
  */
 
 function json(body: unknown, status: number, headers: Record<string, string> = {}) {
@@ -89,15 +91,23 @@ export async function POST(request: Request) {
       try {
         const [row] = await sql`
           insert into participants
-            (code, full_name, email, phone, enrollment_no, course_year, partner_name, partner_enrollment_no)
+            (code, full_name, email, phone, enrollment_no, partner_name, partner_enrollment_no,
+             program, semester, partner_phone, partner_program, partner_semester)
           values (
             'BL-' || lpad(nextval('participant_code_seq')::text, 4, '0'),
             ${input.full_name}, ${input.email}, ${input.phone}, ${input.enrollment_no},
-            ${input.course_year}, ${input.partner_name}, ${input.partner_enrollment_no}
+            ${input.partner_name}, ${input.partner_enrollment_no},
+            ${input.program}, ${input.semester}, ${input.partner_phone}, ${input.partner_program}, ${input.partner_semester}
           )
           returning code, full_name
         `;
-        const result: RegisterResult = { code: row.code, full_name: row.full_name, mode: input.mode };
+        const result: RegisterResult = {
+          code: row.code,
+          full_name: row.full_name,
+          mode: input.mode,
+          program: input.program,
+          semester: input.semester,
+        };
         return json(result, 201);
       } catch (error) {
         const clash = uniqueClash(error);
@@ -109,6 +119,11 @@ export async function POST(request: Request) {
     }
     throw new Error("could not allocate a participant code");
   } catch (error) {
+    // The programme / semester columns come from migration 007. Without it nothing is saved.
+    if (isMissingColumn(error)) {
+      console.error("[api/register] migration 007 has not been applied");
+      return json({ error: "Registration is not ready yet: the database needs its latest migration. Please tell the organisers." }, 503);
+    }
     // Log the message only: never the error object, the input, or connection details.
     console.error("[api/register]", error instanceof Error ? error.message : "unknown error");
     return json({ error: "Something went wrong on our side. Please try again." }, 500);

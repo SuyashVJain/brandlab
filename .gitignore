@@ -44,3 +44,6 @@ next-env.d.ts
 /assets/
 .vercel
 .env*
+
+# dummy posters made by npm run db:seed-dummy (never commit or deploy)
+/public/dummy-posters/

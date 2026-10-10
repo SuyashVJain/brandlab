@@ -948,3 +948,34 @@ select.adm-input {
     min-height: 52px;
   }
 }
+
+/* Optional description: a second, quieter line under each criterion. */
+.adm-crit-list .adm-crit-desc {
+  grid-column: 2 / -1;
+  min-height: 44px;
+  font-size: 16px;
+  font-weight: 400;
+}
+.adm-crit-list li {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgb(10 10 10 / 0.25);
+}
+.adm-score-desc {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0.7;
+}
+
+/* ---------- reveal rank ---------- */
+
+.adm-reveal-rank-input {
+  max-width: 7em;
+  text-align: center;
+}
+.adm-reveal-rank .adm-button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}

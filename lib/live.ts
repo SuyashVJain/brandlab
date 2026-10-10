@@ -19,6 +19,10 @@ export type PublicEventState = {
   serverTime: string;
   revealAt: string | null;
   submissionsCloseAt: string | null;
+  /** The rank being revealed on /live in the results phase (0 = nothing). */
+  revealedRank?: number;
+  /** Changes on every reveal save, so the same rank can be replayed. */
+  revealNonce?: number;
   /** Present ONLY after the reveal. Before it, the key does not exist at all. */
   keywords?: string[];
 };

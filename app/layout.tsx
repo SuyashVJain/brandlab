@@ -25,10 +25,29 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+const TITLE = "BRAND LAB | IEEE SUAS-SB";
+const DESCRIPTION =
+  "Think it. Name it. Brand it. A creative challenge where ideas turn into identities. Tuesday 13 October 2026, Engineering Block, SUAS.";
+
+// Icons (app/icon.svg, favicon.ico, apple-icon.png) and the share image
+// (app/opengraph-image.png, 1200 x 630) are picked up from their file names.
 export const metadata: Metadata = {
-  title: "BRAND LAB | IEEE SUAS-SB",
-  description:
-    "Think it. Name it. Brand it. A creative challenge where ideas turn into identities. Tuesday 13 October 2026, Engineering Block, SUAS.",
+  metadataBase: new URL("https://brandlab-ieee.vercel.app"),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "BRAND LAB",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {

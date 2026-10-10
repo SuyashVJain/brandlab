@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- BRAND LAB tab icon: paper, yellow circle, condensed black B, blue brush stroke. Shapes only, no fonts. -->
+  <rect width="64" height="64" fill="#EFECE6"/>
+  <circle cx="32" cy="30" r="26" fill="#FFD21F"/>
+  <path fill="#0A0A0A" fill-rule="evenodd" d="M21 9H34Q42 9 42 17V21Q42 26 38.5 28Q43 30 43 35V39Q43 47 35 47H21ZM29 16V24H32.5Q34.5 24 34.5 22V18Q34.5 16 32.5 16ZM29 31V40H33Q35 40 35 38V33Q35 31 33 31Z"/>
+  <path fill="#1F3BFF" d="M12 54.5L51 50.5L53 55.5L14 60Z"/>
+</svg>

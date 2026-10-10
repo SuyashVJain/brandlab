@@ -1,0 +1,188 @@
+/* ==========================================================================
+   Live: the keyword reveal screen (/live)
+   Mobile first. Colours and fonts are the tokens from app/globals.css.
+   ========================================================================== */
+
+.live {
+  min-height: 100svh;
+  /* Room for the torn strip at the top and, later, the keyword bar. */
+  padding-top: clamp(96px, 15vw, 170px);
+}
+
+/* ---------- waiting ---------- */
+
+.live-wait {
+  display: grid;
+  justify-items: start;
+  gap: clamp(14px, 2.4vw, 24px);
+}
+.live-wait .section-title {
+  font-size: clamp(4.4rem, 20vw, 12rem);
+}
+.live-wait .tagline {
+  margin: 0;
+}
+.live-line {
+  max-width: 26ch;
+  margin: 0;
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.live-reporting {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid var(--ink);
+}
+
+/* ---------- countdown ---------- */
+
+.live-countdown {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.live-count {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(11rem, 52vw, 24rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+}
+
+/* ---------- revealed ---------- */
+
+/* All keywords, pinned to the top of the screen. */
+.live-bar {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 18px;
+  padding: 9px 16px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.live-bar-label {
+  color: var(--sun);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+}
+
+/* Torn band: a lip of pale paper around a strip of the mountain photo. */
+.live-band {
+  margin-top: 14px;
+  filter: drop-shadow(0 10px 16px rgb(0 0 0 / 0.22));
+}
+.live-band-paper {
+  padding: 9px 5px;
+  background: #f8f6f1;
+}
+.live-band-photo {
+  position: relative;
+  padding: clamp(34px, 7vw, 76px) clamp(18px, 5vw, 60px);
+  background: #1c1e22;
+}
+.live-band-img {
+  position: absolute;
+  inset: 0;
+  background: url("/textures/mountain.jpg") center 55% / cover;
+  /* Same grade as the hero's mountain slice. */
+  filter: grayscale(1) brightness(1.25) contrast(1.45);
+}
+
+.live-words {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: clamp(16px, 3vw, 30px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.live-word {
+  font-family: var(--font-display);
+  font-size: clamp(2.7rem, 11.5vw, 7.5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  transform-origin: 0% 60%;
+}
+
+.live-next {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  margin-top: clamp(36px, 6vw, 64px);
+}
+.live-next-line {
+  max-width: 18ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5.4vw, 3.6rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+
+/* Placeholder for the submit link: looks like a button that is not ready yet. */
+.live-soon {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 12px;
+  padding: 10px 18px;
+  border: 2px dashed var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+/* Status line on yellow tape. */
+.live-flag {
+  margin: 12px 0 0;
+  padding: 6px 14px 5px;
+  background: var(--sun);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- connection note ---------- */
+
+.live-note {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  bottom: 14px;
+  margin: 0;
+  padding: 6px 14px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  translate: -50% 0;
+  white-space: nowrap;
+}
+
+/* The content (and the fixed keyword bar inside it) sits above the torn strip. */
+.live > .sheet-inner {
+  z-index: 3;
+}

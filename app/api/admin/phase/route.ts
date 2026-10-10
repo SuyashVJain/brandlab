@@ -8,7 +8,9 @@ import { readAdminState } from "@/lib/event-state";
  * POST /api/admin/phase (admin only)   body: { phase }
  * Moves the event to any of the seven phases. Moving to 'keywords_revealed'
  * also schedules reveal_at a few seconds ahead when it is empty or already in
- * the past, so the live countdown has time to run.
+ * the past, so the live countdown has time to run. Stepping back to 'closed',
+ * 'registration' or 'live' clears reveal_at, so keywords can never stay
+ * visible after going back.
  */
 export async function POST(request: Request) {
   return adminOnly(request, "api/admin/phase", async () => {
@@ -21,6 +23,7 @@ export async function POST(request: Request) {
       set phase = ${phase}::event_phase,
           updated_at = now(),
           reveal_at = case
+            when ${phase}::text in ('closed', 'registration', 'live') then null
             when ${phase}::text = 'keywords_revealed' and (reveal_at is null or reveal_at < now())
               then now() + make_interval(secs => ${REVEAL_DELAY_SECONDS})
             else reveal_at

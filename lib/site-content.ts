@@ -90,7 +90,9 @@ export const siteContent = {
     phone: "9343379736",
   },
 
-  /** For the FAQ section (not built yet). */
+  faqHeading: "FAQ",
+
+  /** Questions and answers for the FAQ accordion, in order. */
   faq: [
     { question: "Who can participate?", answer: "SUAS students only." },
     { question: "Is there a fee?", answer: "No. It is free to participate." },
@@ -108,7 +110,23 @@ export const siteContent = {
     { question: "Who do I contact?", answer: "Suyash Vasal Jain, 9343379736." },
   ] as FaqItem[],
 
-  /** For the footer (not built yet). */
+  /** Footer labels. */
+  footer: {
+    register: "Register now",
+    contactHeading: "Contact",
+    creditsHeading: "Credits",
+  },
+
+  /** Organiser logos for the footer, in display order (files in public/logos, transparent and trimmed). */
+  logos: [
+    { src: "/logos/ieee-blue-clean.png", alt: "IEEE", width: 544, height: 160 },
+    { src: "/logos/ieee-suas-sb-clean.png", alt: "IEEE SUAS Student Branch", width: 245, height: 241 },
+    { src: "/logos/ieee-cs-clean.png", alt: "IEEE Computer Society, SUAS chapter", width: 250, height: 251 },
+    { src: "/logos/ieee-wie-clean.png", alt: "IEEE Women in Engineering, SUAS", width: 243, height: 244 },
+    { src: "/logos/suas-logo-clean.png", alt: "Symbiosis University of Applied Sciences", width: 1139, height: 240 },
+  ],
+
+  /** Footer credits. Web addresses in these lines become links automatically. */
   credits: [
     "3D model 'David Head' by 1d_inc (https://sketchfab.com/1d_inc), licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Source: https://skfb.ly/oKvzW. Modified: material and shader effects applied.",
     "Mountain photo by Pietro Dona on Unsplash.",

@@ -1,0 +1,85 @@
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.foot {
+  /* Room for the torn black strip that sits across the top edge. */
+  padding-top: clamp(96px, 14vw, 170px);
+  padding-bottom: clamp(40px, 6vw, 72px);
+}
+
+.foot-cta {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+.foot-cta .register {
+  min-height: 48px;
+}
+
+/* Five logos at one height, wrapping on narrow screens. */
+.foot-logos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px clamp(20px, 3.4vw, 48px);
+  margin: 0 0 clamp(36px, 5vw, 60px);
+  padding: 0 0 clamp(28px, 4vw, 44px);
+  border-bottom: 2px solid var(--ink);
+  list-style: none;
+
+  --logo-h: clamp(38px, 5.4vw, 60px);
+}
+.foot-logos li {
+  display: flex;
+}
+.foot-logos img {
+  width: auto;
+  height: var(--logo-h);
+}
+
+.foot-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px 48px;
+}
+@media (min-width: 800px) {
+  .foot-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  }
+}
+
+.foot-contact {
+  margin: 6px 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.foot-credit {
+  max-width: 78ch;
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.foot a:not(.register) {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.foot a:not(.register):hover {
+  color: var(--royal);
+}
+.foot a:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 3px;
+}
+/* The phone number is the one link people tap on a phone: give it a full-size target. */
+.foot-contact a {
+  display: inline-block;
+  min-height: 44px;
+  line-height: 44px;
+}

@@ -24,7 +24,7 @@ export function toParticipantRow(row: DbRow): ParticipantRow {
 
 /**
  * Participants ordered by code. `q` matches code, name, email, enrollment
- * number or phone, case-insensitively; `%`, `_` and `\` in it are taken literally.
+ * number, phone, partner name or partner enrollment number, case-insensitively; `%`, `_` and `\` in it are taken literally.
  */
 export async function listParticipants(q: string, status: CheckinStatus): Promise<ParticipantRow[]> {
   const pattern = `%${q.replace(/[\\%_]/g, "\\$&")}%`;
@@ -39,6 +39,8 @@ export async function listParticipants(q: string, status: CheckinStatus): Promis
         or email ilike ${pattern}
         or enrollment_no ilike ${pattern}
         or phone ilike ${pattern}
+        or partner_name ilike ${pattern}
+        or partner_enrollment_no ilike ${pattern}
       )
       and (${status} = 'all' or checked_in = (${status} = 'checked_in'))
     order by code

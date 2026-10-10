@@ -371,53 +371,6 @@
 
 /* ---------- copy ---------- */
 
-.live-stage-top {
-  position: absolute;
-  z-index: 4;
-  top: clamp(12px, 2.4svh, 26px);
-  left: 50%;
-  translate: -50% 0;
-  transition: opacity 0.4s ease-out;
-}
-.live-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 12px 5px 10px;
-  border: 2px solid var(--ink);
-  background: var(--paper);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.32em;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
-.live-dot {
-  position: relative;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--royal);
-}
-.live-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: var(--royal);
-  animation: live-pulse 1.6s ease-out infinite;
-}
-@keyframes live-pulse {
-  from {
-    opacity: 0.7;
-    scale: 1;
-  }
-  to {
-    opacity: 0;
-    scale: 3.2;
-  }
-}
-
 .live-stage-copy {
   position: absolute;
   z-index: 4;
@@ -432,22 +385,6 @@
 }
 .live-stage-copy .tagline {
   margin: 0;
-}
-.live-stage-line {
-  margin: 0;
-  font-size: clamp(1rem, 1.45vw, 1.4rem);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  line-height: 1.4;
-}
-.live-stage-reporting {
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  right: 0;
-  bottom: clamp(12px, 2.6svh, 28px);
-  text-align: center;
-  transition: opacity 0.4s ease-out;
 }
 
 /* ---------- countdown: one huge number over the statue's chest ---------- */
@@ -480,9 +417,7 @@
 /* ---------- reveal: the band tears open across the middle of the screen ---------- */
 
 .live-stage.is-revealed .live-stage-title,
-.live-stage.is-revealed .live-stage-top,
-.live-stage.is-revealed .live-stage-copy,
-.live-stage.is-revealed .live-stage-reporting {
+.live-stage.is-revealed .live-stage-copy {
   opacity: 0;
   pointer-events: none;
 }
@@ -559,9 +494,7 @@
   scale: 0.93;
 }
 .live-stage.is-ranking .live-revealed,
-.live-stage.is-ranking .live-stage-top,
 .live-stage.is-ranking .live-stage-copy,
-.live-stage.is-ranking .live-stage-reporting,
 .live-stage.is-ranking .live-stage-count {
   opacity: 0;
   pointer-events: none;

@@ -26,7 +26,6 @@ type LiveSceneProps = {
   data: PublicEventState | null;
   seconds: number | null;
   animate: boolean;
-  reporting?: string;
   /** WebGL or the model failed: the page falls back to the plain screen. */
   onFail: () => void;
 };
@@ -41,7 +40,7 @@ type LiveSceneProps = {
  * only puts that state in its finished pose and animates bandWidth.
  * Loaded with next/dynamic from Live.tsx: three.js is desktop-only.
  */
-export default function LiveScene({ data, seconds, animate, reporting, onFail }: LiveSceneProps) {
+export default function LiveScene({ data, seconds, animate, onFail }: LiveSceneProps) {
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const flash = useRef<HTMLDivElement>(null);
@@ -183,19 +182,11 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
       </div>
 
       {/* ---------- copy ---------- */}
-      <div className="live-stage-top">
-        {/* <span className="live-tag">
-          <span className="live-dot" aria-hidden />
-          Live
-        </span> */}
-      </div>
       <div className="live-stage-copy" aria-hidden={revealed || counting ? true : undefined}>
         <p className="tagline">
           Think it. <mark>Name it.</mark> <em>Brand it.</em>
         </p>
-        <p className="live-stage-line">Keywords appear here the moment the event starts.</p>
       </div>
-      {reporting && <p className="eyebrow live-stage-reporting">Reporting {reporting}</p>}
 
       {/* ---------- countdown ---------- */}
       {counting && (

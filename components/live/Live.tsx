@@ -40,7 +40,7 @@ export default function Live() {
   if (desktop && !reduced && !sceneFailed) {
     return (
       <>
-        <LiveScene data={data} seconds={seconds} animate={animate} reporting={reporting} onFail={failScene} />
+        <LiveScene data={data} seconds={seconds} animate={animate} onFail={failScene} />
         {reconnecting && (
           <p className="live-note" role="status">
             Reconnecting...

@@ -1,7 +1,7 @@
 import Hero from "@/components/Hero";
 import HowItWorks from "@/components/how-it-works/HowItWorks";
 import Details from "@/components/details/Details";
-import RegisterPlaceholder from "@/components/register/RegisterPlaceholder";
+import Register from "@/components/register/Register";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       <Hero />
       <HowItWorks />
       <Details />
-      <RegisterPlaceholder />
+      <Register />
     </main>
   );
 }

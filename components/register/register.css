@@ -1,22 +1,342 @@
-/* Placeholder for the registration section. */
+/* ==========================================================================
+   Register
+   Mobile first. Inputs are 16px so iOS does not zoom; controls are >= 44px tall.
+   ========================================================================== */
 
-.register-soon {
-  padding-top: 0;
-}
-
-.register-box {
+.reg-grid {
   display: grid;
-  place-items: center;
-  min-height: clamp(220px, 34vw, 360px);
-  padding: 24px;
-  border: 2px dashed var(--ink);
-  text-align: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 48px) 48px;
 }
 
-.register-box p {
+.reg-main {
+  display: grid;
+  gap: clamp(24px, 4vw, 40px);
+  min-width: 0;
+}
+
+@media (min-width: 1000px) {
+  .reg-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: start;
+  }
+  .reg-intro {
+    grid-column: 1 / span 5;
+  }
+  .reg-main {
+    grid-column: 6 / span 7;
+  }
+}
+
+/* ---------- intro ---------- */
+
+.reg-points {
+  display: grid;
+  gap: 6px;
+  margin: clamp(20px, 3vw, 32px) 0 0;
+  padding: 16px 0 0;
+  border-top: 2px solid var(--ink);
+  list-style: none;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ---------- headings inside the panels ---------- */
+
+.reg-heading {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 400;
   line-height: 1;
   text-transform: uppercase;
+}
+.reg-heading--small {
+  margin-bottom: 18px;
+  font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+}
+
+/* ---------- form ---------- */
+
+.reg-form {
+  display: grid;
+  gap: 18px;
+}
+
+.reg-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+@media (min-width: 600px) {
+  .reg-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.reg-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.reg-field label,
+.reg-choices legend {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.reg-optional {
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  opacity: 0.65;
+}
+
+.reg-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px; /* below 16px iOS Safari zooms the page on focus */
+  font-weight: 500;
+  line-height: 1.3;
+  appearance: none;
+}
+.reg-input::placeholder {
+  color: rgb(10 10 10 / 0.4);
+}
+.reg-input:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 2px;
+}
+/* Invalid: a yellow marker edge. Yellow is the palette's emphasis colour. */
+.reg-input[aria-invalid="true"] {
+  box-shadow: 5px 5px 0 var(--sun);
+}
+
+.reg-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.7;
+}
+
+/* Inline error: a strip of yellow tape under the field. */
+.reg-error {
+  justify-self: start;
+  margin: 0;
+  padding: 3px 9px;
+  background: var(--sun);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ---------- alone / partner toggle ---------- */
+
+.reg-choices {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.reg-choices legend {
+  margin-bottom: 7px;
+  padding: 0;
+}
+@media (min-width: 600px) {
+  .reg-choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.reg-choice {
+  position: relative;
+  display: block;
+}
+/* The real radio stays in the DOM for keyboard and screen-reader use. */
+.reg-choice input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.reg-choice span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 2px solid var(--ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+}
+.reg-choice input:checked + span {
+  background: var(--ink);
+  color: var(--paper);
+}
+.reg-choice input:focus-visible + span {
+  outline: 3px solid var(--royal);
+  outline-offset: 2px;
+}
+
+/* ---------- buttons ---------- */
+
+/* The hero's brush button (.register), used on a <button>. */
+.reg-submit {
+  justify-self: start;
+  min-height: 48px;
+  margin: 10px 8px 6px;
+  border: 0;
+  background: none;
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+.reg-submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.reg-ghost {
+  min-height: 44px;
+  padding: 8px 20px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+}
+.reg-ghost:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+.reg-ghost:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.reg-ghost:focus-visible,
+.reg-link:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 3px;
+}
+
+.reg-link {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.reg-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+/* ---------- notices (closed, error, checking) ---------- */
+
+.reg-notice {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+.reg-notice p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ---------- success ---------- */
+
+.reg-success {
+  display: grid;
+  gap: 16px;
+}
+.reg-code {
+  margin: 4px 0 2px;
+  font-family: var(--font-display);
+  font-size: clamp(3.6rem, 16vw, 6.5rem);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  /* Lets a long press / drag select the code for manual copying. */
+  user-select: all;
+}
+.reg-save {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.reg-summary {
+  display: grid;
+  gap: 0;
+  margin: 4px 0 0;
+}
+.reg-summary > div {
+  padding: 10px 0;
+  border-top: 2px solid var(--ink);
+}
+.reg-summary dd {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.reg-lookup-result:not(:empty) {
+  margin-top: 18px;
+}
+.reg-lookup-result .reg-error {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reg-ghost {
+    transition: none;
+  }
+}
+
+/* Stored in capitals, so show them that way while typing. */
+.reg-input[autocapitalize="characters"] {
+  text-transform: uppercase;
+}
+.reg-input[autocapitalize="characters"]::placeholder {
+  text-transform: none;
 }

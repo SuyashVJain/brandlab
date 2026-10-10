@@ -42,3 +42,5 @@ next-env.d.ts
 
 # raw source files (the site serves public/)
 /assets/
+.vercel
+.env*

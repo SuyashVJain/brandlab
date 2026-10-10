@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Submit (/submit)
+   Layout, panels, inputs and buttons are Register's (.reg-*). Only the pieces
+   that are new here are styled below. Mobile first.
+   ========================================================================== */
+
+.sub {
+  padding-top: clamp(40px, 7vw, 96px);
+}
+
+/* ---------- deadline ---------- */
+
+.sub-status {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  margin-top: clamp(20px, 3vw, 32px);
+  padding-top: 16px;
+  border-top: 2px solid var(--ink);
+}
+.sub-count {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 13vw, 6rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.sub-text {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+/* "Not open yet" / "closed": yellow tape. */
+.sub-flag {
+  margin: 0;
+  padding: 6px 14px 5px;
+  background: var(--sun);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* ---------- who is submitting ---------- */
+
+.sub-step {
+  display: grid;
+  gap: 22px;
+}
+.sub-who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6px 20px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+}
+.sub-who p {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.sub-who .eyebrow {
+  display: block;
+}
+.sub-code {
+  margin-left: 6px;
+  padding: 1px 8px;
+  background: var(--sun);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- form extras ---------- */
+
+.sub-counter {
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.sub-file {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px;
+  border: 2px dashed var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
+.sub-file::file-selector-button {
+  min-height: 30px;
+  margin-right: 12px;
+  padding: 4px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.sub-file:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 2px;
+}
+.sub-file[aria-invalid="true"] {
+  box-shadow: 5px 5px 0 var(--sun);
+}
+.sub-file:disabled,
+.reg-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sub-file-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.sub-file-info span {
+  opacity: 0.7;
+}
+
+.sub-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 360px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  object-fit: contain;
+}
+
+/* Upload progress: black bar with a blue brush end, like the judging bars. */
+.sub-progress {
+  position: relative;
+  height: 30px;
+  background: rgb(10 10 10 / 0.1);
+}
+.sub-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  min-width: 6px;
+  background: var(--ink);
+  border-right: 8px solid var(--royal);
+  transition: width 0.2s linear;
+}
+.sub-progress-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  mix-blend-mode: difference;
+}
+
+.sub-actions {
+  gap: 14px 22px;
+}
+.reg-submit:disabled,
+.reg-ghost:disabled {
+  cursor: not-allowed;
+}
+
+/* ---------- submitted ---------- */
+
+.sub-done {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+.sub-done-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 8vw, 4rem);
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.sub-done-tagline {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.sub-done .reg-summary {
+  justify-self: stretch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sub-progress-fill {
+    transition: none;
+  }
+}

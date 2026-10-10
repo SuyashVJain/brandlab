@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import type { Phase } from "@/lib/admin-schema";
@@ -79,9 +80,9 @@ export default function Revealed({ keywords, phase, animate, variant = "wipe" }:
         <p className="live-next-line">Create a unique event name, then design a poster.</p>
 
         {phase === "submissions_open" && (
-          <span className="live-soon" aria-disabled="true">
-            Submissions open soon, link appears here
-          </span>
+          <Link className="live-submit" href="/submit">
+            Submit your poster
+          </Link>
         )}
         {phase === "submissions_closed" && <p className="live-flag">Submissions are closed</p>}
         {phase === "results" && <p className="live-flag">Results are being announced</p>}

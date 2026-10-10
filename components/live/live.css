@@ -137,21 +137,29 @@
   text-transform: uppercase;
 }
 
-/* Placeholder for the submit link: looks like a button that is not ready yet. */
-.live-soon {
+/* "Submit your poster": solid ink button with a blue underline. */
+.live-submit {
   display: inline-flex;
   align-items: center;
   min-height: 48px;
   margin-top: 12px;
-  padding: 10px 18px;
-  border: 2px dashed var(--ink);
-  font-size: 0.82rem;
+  padding: 10px 26px;
+  background: var(--ink);
+  box-shadow: 0 6px 0 var(--royal);
+  color: var(--paper);
+  font-size: 0.9rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   line-height: 1.4;
+  text-decoration: none;
   text-transform: uppercase;
-  opacity: 0.55;
-  cursor: not-allowed;
+}
+.live-submit:hover {
+  background: var(--royal);
+}
+.live-submit:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 4px;
 }
 /* Status line on yellow tape. */
 .live-flag {
@@ -525,7 +533,7 @@
   max-width: none;
   font-size: clamp(1.6rem, min(3vw, 5.2svh), 3rem);
 }
-.live-stage .live-soon,
+.live-stage .live-submit,
 .live-stage .live-flag {
   margin-top: 6px;
 }

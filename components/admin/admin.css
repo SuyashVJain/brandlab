@@ -764,3 +764,187 @@ select.adm-input {
   letter-spacing: 0.08em;
   white-space: normal;
 }
+
+/* ---------- registrations + check-in ---------- */
+
+.adm-reg-counts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 0 16px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.adm-reg-counts > div {
+  padding: 12px 16px 10px;
+  border-left: 1px solid rgb(239 236 230 / 0.25);
+}
+.adm-reg-counts > div:first-child {
+  border-left: 0;
+}
+.adm-reg-counts dt {
+  color: var(--sun);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+.adm-reg-counts dd {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.adm-reg-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.adm-reg-search {
+  min-height: 56px;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.adm-reg-filter {
+  width: auto;
+}
+.adm-reg-tools .adm-button {
+  min-height: 56px;
+}
+.adm-reg-export {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.adm-reg-notice {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  min-height: 46px;
+  margin-bottom: 8px;
+}
+/* The check-in confirmation: large, on the palette's yellow. */
+.adm-checked {
+  margin: 0;
+  padding: 8px 16px;
+  background: var(--sun);
+  box-shadow: 5px 5px 0 var(--ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.adm-reg-code {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+.adm-reg-sub {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  opacity: 0.7;
+  overflow-wrap: anywhere;
+}
+.adm-reg-table td {
+  overflow-wrap: anywhere;
+}
+.adm-reg-action {
+  text-align: right;
+}
+
+/* Check in / Undo: a big toggle. */
+.adm-check {
+  min-width: 10.5em;
+  min-height: 48px;
+  padding: 8px 16px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.adm-check:hover {
+  background: var(--paper);
+}
+.adm-check[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 4px 4px 0 var(--sun);
+}
+.adm-check:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 2px;
+}
+
+/* Phone: counters two by two, tools stacked, and each participant as a card. */
+@media (max-width: 760px) {
+  .adm-reg-counts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .adm-reg-counts > div:nth-child(3) {
+    border-left: 0;
+  }
+  .adm-reg-counts > div:nth-child(n + 3) {
+    border-top: 1px solid rgb(239 236 230 / 0.25);
+  }
+  .adm-reg-tools {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .adm-reg-search,
+  .adm-reg-filter {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .adm-reg-export {
+    justify-content: center;
+  }
+
+  .adm-reg-table,
+  .adm-reg-table tbody {
+    display: block;
+  }
+  .adm-reg-table thead {
+    display: none;
+  }
+  .adm-reg-table tr {
+    display: grid;
+    gap: 8px;
+    padding: 16px 0;
+    border-top: 2px solid var(--ink);
+  }
+  .adm-reg-table tr:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  .adm-reg-table td {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+  .adm-reg-table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .adm-reg-code {
+    font-size: 1.8rem;
+  }
+  .adm-check {
+    width: 100%;
+    min-height: 52px;
+  }
+}

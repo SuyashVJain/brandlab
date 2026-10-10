@@ -5,11 +5,13 @@ import type { AdminState, StaffRole } from "@/lib/admin-schema";
 import AdminPanel from "./AdminPanel";
 import CriteriaPanel from "./CriteriaPanel";
 import LeaderboardPanel from "./LeaderboardPanel";
+import RegistrationsPanel from "./RegistrationsPanel";
 import ScoringPanel from "./ScoringPanel";
 import StaffPanel from "./StaffPanel";
 
 const TABS = [
   { id: "control", label: "Event control" },
+  { id: "registrations", label: "Registrations" },
   { id: "criteria", label: "Criteria" },
   { id: "leaderboard", label: "Leaderboard" },
   { id: "staff", label: "Staff" },
@@ -25,7 +27,7 @@ type AdminTabsProps = {
 };
 
 /**
- * The /admin screen. Admins run the event (four tabs) and do not score;
+ * The /admin screen. Admins run the event (five tabs) and do not score;
  * jury accounts get only the scoring view. The API enforces the same split.
  */
 export default function AdminTabs({ role, email, initialState }: AdminTabsProps) {
@@ -58,6 +60,11 @@ export default function AdminTabs({ role, email, initialState }: AdminTabsProps)
       </div>
 
       {/* The other tabs load fresh data each time they are opened. */}
+      {tab === "registrations" && (
+        <div id="adm-view-registrations" role="tabpanel" aria-labelledby="adm-tab-registrations">
+          <RegistrationsPanel />
+        </div>
+      )}
       {tab === "criteria" && (
         <div id="adm-view-criteria" role="tabpanel" aria-labelledby="adm-tab-criteria">
           <CriteriaPanel />

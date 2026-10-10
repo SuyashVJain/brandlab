@@ -10,34 +10,37 @@ type RevealedProps = {
   phase: Phase;
   /** Play the one-by-one reveal. False when the page was opened after the reveal, or with reduced motion. */
   animate: boolean;
+  /** "wipe" (default): the strip wipes in from the left. "tear": it tears open from its middle (desktop stage). */
+  variant?: "wipe" | "tear";
 };
 
 /** The keywords: big on a torn mountain strip, then pinned in a bar at the top of the screen. */
-export default function Revealed({ keywords, phase, animate }: RevealedProps) {
+export default function Revealed({ keywords, phase, animate, variant = "wipe" }: RevealedProps) {
   const root = useRef<HTMLDivElement>(null);
   // The bar would give the words away, so it waits for the reveal to finish.
   const [barVisible, setBarVisible] = useState(!animate);
 
   useLayoutEffect(() => {
     if (!animate) return;
+    const tear = variant === "tear";
     const context = gsap.context(() => {
       gsap
         .timeline({ onComplete: () => setBarVisible(true) })
-        // The torn strip wipes in from the left...
+        // The torn strip wipes in from the left (or tears open from its middle)...
         .fromTo(
           ".live-band",
-          { clipPath: "inset(0% 100% 0% 0%)" },
+          { clipPath: tear ? "inset(50% 0% 50% 0%)" : "inset(0% 100% 0% 0%)" },
           { clipPath: "inset(0% 0% 0% 0%)", duration: 0.6, ease: "power3.inOut", clearProps: "clipPath" },
         )
         // ...then the keywords land one by one, 0.5s apart.
         .from(
           ".live-word",
-          { opacity: 0, y: 36, scale: 1.25, duration: 0.45, ease: "power3.out", stagger: 0.5 },
+          { opacity: 0, y: tear ? 0 : 36, scale: tear ? 1.7 : 1.25, duration: 0.45, ease: tear ? "power4.out" : "power3.out", stagger: 0.5 },
           "+=0.1",
         );
     }, root);
     return () => context.revert();
-  }, [animate]);
+  }, [animate, variant]);
 
   return (
     <div ref={root} className="live-revealed">

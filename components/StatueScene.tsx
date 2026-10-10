@@ -33,6 +33,8 @@ const CAMERA_Z = 8;
 const MODEL_FIX = new THREE.Euler(0, 0, 0);
 /** Resting pose in the hero: a three-quarter view, chin slightly up, like the poster. */
 const POSE = { x: -0.06, y: -0.1, z: 0.03 };
+/** Resting pose for layout="center" (the /live stage): face to camera, a tiny three-quarter turn, no roll. */
+const CENTER_POSE = { x: -0.04, y: -0.07, z: 0 };
 /** Statue height as a fraction of the DOM stage box it is aligned to. */
 const STAGE_FILL = 0.94;
 /** How close the camera ends up, in statue heights from the face. */
@@ -44,6 +46,12 @@ const lerp = THREE.MathUtils.lerp;
 const easeInOut = (t: number) => t * t * (3 - 2 * t);
 
 type SceneProps = {
+  /**
+   * "hero" (default): the statue sits exactly on the stage box, in the hero's three-quarter pose.
+   * "center": the statue is centred on the canvas horizontally (height and vertical position still
+   * come from the stage box) in a near-frontal, symmetrical pose.
+   */
+  layout?: "hero" | "center";
   /** DOM box the statue is positioned and sized against. */
   stageRef: RefObject<HTMLDivElement | null>;
   mobile: boolean;
@@ -129,7 +137,7 @@ function bakeGeometry(scene: THREE.Object3D) {
 /* Statue                                                                   */
 /* ------------------------------------------------------------------------ */
 
-function Statue({ stageRef, mobile, reduced, onReady }: Omit<SceneProps, "onError">) {
+function Statue({ stageRef, mobile, reduced, onReady, layout: placement = "hero" }: Omit<SceneProps, "onError">) {
   const gltf = useGLTF(ASSETS.model, false);
   const size = useThree((state) => state.size);
   const invalidate = useThree((state) => state.invalidate);
@@ -224,13 +232,13 @@ function Statue({ stageRef, mobile, reduced, onReady }: Omit<SceneProps, "onErro
     const centreX = stage.offsetLeft + stage.offsetWidth / 2;
     const centreY = stage.offsetTop + stage.offsetHeight / 2;
     layout.current = {
-      x: (centreX / size.width - 0.5) * viewWidth,
+      x: placement === "center" ? 0 : (centreX / size.width - 0.5) * viewWidth,
       y: -(centreY / size.height - 0.5) * viewHeight,
       height: (stage.offsetHeight / size.height) * viewHeight * STAGE_FILL,
       viewHeight,
     };
     invalidate();
-  }, [size, stageRef, invalidate]);
+  }, [size, stageRef, invalidate, placement]);
 
   const scratch = useMemo(
     () => ({ eye: new THREE.Vector3(), buffer: new THREE.Vector2() }),
@@ -268,10 +276,11 @@ function Statue({ stageRef, mobile, reduced, onReady }: Omit<SceneProps, "onErro
 
     // Mouse tilt (already lerp-smoothed in the parallax ticker; zero on touch devices).
     const settle = (1 - pose) * calm;
+    const rest = placement === "center" ? CENTER_POSE : POSE;
     statue.rotation.set(
-      POSE.x * (1 - pose) + hero.mouseY * 0.16 * settle + Math.sin(time * 0.7) * 0.015 * alive * calm,
-      POSE.y * (1 - pose) + hero.spin + hero.mouseX * 0.3 * settle,
-      POSE.z * (1 - pose) + Math.sin(time * 0.55) * 0.012 * alive * calm,
+      rest.x * (1 - pose) + hero.mouseY * 0.16 * settle + Math.sin(time * 0.7) * 0.015 * alive * calm,
+      rest.y * (1 - pose) + hero.spin + hero.mouseX * 0.3 * settle,
+      rest.z * (1 - pose) + Math.sin(time * 0.55) * 0.012 * alive * calm,
     );
 
     // --- camera: dolly from the wide shot into the eye line ---
@@ -364,7 +373,7 @@ function Statue({ stageRef, mobile, reduced, onReady }: Omit<SceneProps, "onErro
 /* Canvas                                                                   */
 /* ------------------------------------------------------------------------ */
 
-export default function StatueScene({ stageRef, mobile, reduced, onReady, onError }: SceneProps) {
+export default function StatueScene({ stageRef, mobile, reduced, onReady, onError, layout }: SceneProps) {
   const wrap = useRef<HTMLDivElement>(null);
 
   // Stop rendering once the hero has scrolled out of view.
@@ -393,7 +402,7 @@ export default function StatueScene({ stageRef, mobile, reduced, onReady, onErro
         >
           <SceneBoundary onError={onError}>
             <Suspense fallback={null}>
-              <Statue stageRef={stageRef} mobile={mobile} reduced={reduced} onReady={onReady} />
+              <Statue stageRef={stageRef} mobile={mobile} reduced={reduced} onReady={onReady} layout={layout} />
             </Suspense>
           </SceneBoundary>
         </Canvas>

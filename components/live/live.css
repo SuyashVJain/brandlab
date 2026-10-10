@@ -188,9 +188,9 @@
 }
 
 /* ==========================================================================
-   Desktop scene (LiveScene): the hero's statue as the backdrop.
-   The layout classes (.hero-pin, .hero-copy, .hero-canvas ...) are the hero's
-   own, from app/globals.css. Only the live-specific pieces are styled here.
+   Desktop stage (LiveScene): a centred, symmetrical scene for a big screen.
+   Paper, grain, grid and torn corners are the site's own; the statue is the
+   hero's StatueScene. Everything is sized from --stage, the statue's box.
    ========================================================================== */
 
 .live-scene-loading {
@@ -198,16 +198,177 @@
   background: var(--paper);
 }
 
-/* LIVE tag + reporting line, where the hero has its logo bar. */
-.live-scene-top {
+.live-stage {
+  position: relative;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--paper);
+  isolation: isolate;
+
+  --stage: min(62svh, 44vw);
+  /* Vertical centre of the statue's box, and of its head. */
+  --stage-y: 46%;
+  --head-y: 38%;
+}
+
+/* Small torn corners. */
+.live-stage .torn {
+  width: clamp(70px, 9vw, 170px);
+  height: clamp(60px, 13svh, 140px);
+}
+
+/* The box StatueScene sizes the statue from (centred). */
+.stage-box {
+  position: absolute;
+  left: calc(50% - var(--stage) / 2);
+  top: calc(var(--stage-y) - var(--stage) / 2);
+  width: var(--stage);
+  height: var(--stage);
+  pointer-events: none;
+}
+
+/* ---------- behind the statue ---------- */
+
+.stage-circle {
+  position: absolute;
+  z-index: 1;
+  left: calc(50% - var(--stage) * 0.46);
+  top: calc(var(--head-y) - var(--stage) * 0.46);
+  width: calc(var(--stage) * 0.92);
+  aspect-ratio: 1;
+}
+.stage-circle .circle {
+  width: 100%;
+  height: 100%;
+}
+
+.stage-bulb {
+  position: absolute;
+  z-index: 1;
+  left: calc(50% + var(--stage) * 0.32);
+  top: calc(var(--head-y) - var(--stage) * 0.56);
+  width: calc(var(--stage) * 0.1);
+}
+
+/* Left half and its mirror image: scraps, dots and clouds are measured from the centre line. */
+.stage-sides {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+.stage-side {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+}
+.stage-side--right {
+  left: 50%;
+  scale: -1 1;
+}
+
+.stage-scrap,
+.stage-dots {
+  position: absolute;
+}
+.stage-scrap--black {
+  right: -1px;
+  top: calc(var(--stage-y) + var(--stage) * 0.3);
+  width: calc(var(--stage) * 0.62);
+  height: calc(var(--stage) * 0.17);
+  background: var(--ink);
+  clip-path: polygon(0 34%, 38% 12%, 100% 0, 100% 100%, 44% 92%, 6% 100%);
+}
+.stage-scrap--blue {
+  right: calc(var(--stage) * 0.5);
+  top: calc(var(--stage-y) + var(--stage) * 0.14);
+  width: calc(var(--stage) * 0.15);
+  height: calc(var(--stage) * 0.22);
+  background: var(--royal);
+  clip-path: polygon(10% 0, 100% 8%, 88% 100%, 0 86%);
+}
+.stage-dots {
+  right: calc(var(--stage) * 0.68);
+  top: calc(var(--stage-y) + var(--stage) * 0.2);
+  width: calc(var(--stage) * 0.2);
+  height: calc(var(--stage) * 0.2);
+  background-image: radial-gradient(var(--ink) 1.3px, transparent 1.6px);
+  background-size: 12px 12px;
+}
+.stage-cross {
+  right: calc(var(--stage) * 0.98);
+  top: calc(var(--stage-y) + var(--stage) * 0.5);
+}
+
+/* Clouds drift slowly; the mirrored side drifts the opposite way. */
+.stage-cloud {
+  position: absolute;
+  display: block;
+  overflow: visible;
+  animation: stage-drift 24s ease-in-out infinite alternate;
+}
+.stage-cloud--low {
+  right: calc(var(--stage) * 0.4);
+  top: calc(var(--stage-y) + var(--stage) * 0.02);
+  width: calc(var(--stage) * 0.42);
+}
+.stage-cloud--high {
+  right: calc(var(--stage) * 0.92);
+  top: 6%;
+  width: calc(var(--stage) * 0.3);
+  animation-duration: 32s;
+  animation-direction: alternate-reverse;
+}
+@keyframes stage-drift {
+  from {
+    translate: -28px 0;
+  }
+  to {
+    translate: 28px 5px;
+  }
+}
+
+/* ---------- BRAND | statue | LAB ----------
+   The hero's headline markup and classes. Only the layout differs: BRAND and
+   LAB are pushed apart so the statue's head stands between them and overlaps
+   the edge of each. The LAB lettering itself is not restyled. */
+.live-stage-title {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  top: var(--head-y);
+  translate: 0 -50%;
+  transition: opacity 0.5s ease-out;
+
+  --headline: min(16vw, 30svh);
+}
+.live-stage-title .hero-headline {
+  display: grid;
+  grid-template-columns: 1fr calc(var(--stage) * 0.28) 1fr;
+  align-items: end;
+}
+.live-stage-title .brand-wrap {
+  grid-column: 1;
+  justify-self: end;
+}
+.live-stage-title .lab-wrap {
+  grid-column: 3;
+  justify-self: start;
+  margin-left: 0;
+}
+
+/* ---------- copy ---------- */
+
+.live-stage-top {
   position: absolute;
   z-index: 4;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  padding: clamp(18px, 3.4svh, 34px) 0 0 clamp(60px, 9vw, 150px);
+  top: clamp(12px, 2.4svh, 26px);
+  left: 50%;
+  translate: -50% 0;
   transition: opacity 0.4s ease-out;
 }
 .live-tag {
@@ -216,6 +377,7 @@
   gap: 10px;
   padding: 5px 12px 5px 10px;
   border: 2px solid var(--ink);
+  background: var(--paper);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.32em;
@@ -248,53 +410,122 @@
   }
 }
 
-/* Countdown: lower right, over the statue's shoulder so the face stays visible. */
-.live-scene-count {
+.live-stage-copy {
   position: absolute;
-  z-index: 5;
-  right: clamp(24px, 5vw, 90px);
-  bottom: clamp(20px, 7svh, 70px);
+  z-index: 4;
+  left: 0;
+  right: 0;
+  top: calc(var(--stage-y) + var(--stage) * 0.5 + 1svh);
   display: grid;
-  justify-items: start; /* label sits over the number's left edge, clear of the bulb */
-  gap: 4px;
+  justify-items: center;
+  gap: 1.1svh;
+  text-align: center;
+  transition: opacity 0.4s ease-out;
 }
-.live-scene .live-count {
-  font-size: min(25vw, 42svh);
+.live-stage-copy .tagline {
+  margin: 0;
+}
+.live-stage-line {
+  margin: 0;
+  font-size: clamp(1rem, 1.45vw, 1.4rem);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+.live-stage-reporting {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  bottom: clamp(12px, 2.6svh, 28px);
+  text-align: center;
+  transition: opacity 0.4s ease-out;
 }
 
-/* Reveal: the keyword band takes the headline's place, statue still behind on the right. */
-.live-scene .hero-copy {
-  transition: opacity 0.5s ease-out;
+/* ---------- countdown: one huge number over the statue's chest ---------- */
+
+.live-stage-count {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 70%;
+  translate: -50% -50%;
 }
-.live-scene.is-revealed .hero-copy,
-.live-scene.is-revealed .live-scene-top {
+.live-stage .live-count {
+  font-size: min(36svh, 26vw);
+  line-height: 0.95;
+}
+.live-stage.is-counting .live-stage-copy {
+  opacity: 0;
+}
+
+/* White flash at zero. */
+.live-flash {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  background: #fffdf2;
   opacity: 0;
   pointer-events: none;
 }
-.live-scene-reveal {
+
+/* ---------- reveal: the band tears open across the middle of the screen ---------- */
+
+.live-stage.is-revealed .live-stage-title,
+.live-stage.is-revealed .live-stage-top,
+.live-stage.is-revealed .live-stage-copy,
+.live-stage.is-revealed .live-stage-reporting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.live-stage .live-revealed {
   position: absolute;
-  z-index: 5;
-  top: 0;
-  bottom: 0;
-  left: clamp(18px, 5vw, 76px);
+  z-index: 6;
+  inset: 0;
+}
+.live-stage .live-revealed > .eyebrow {
+  display: none;
+}
+/* Full-bleed strip across the statue's chest, so the head stays visible above it. */
+.live-stage .live-band {
+  position: absolute;
+  left: -14px;
+  right: -14px;
+  top: 62%;
+  translate: 0 -50%;
+  margin: 0;
+}
+.live-stage .live-band-photo {
+  padding: clamp(30px, 6.5svh, 70px) 6vw;
+}
+.live-stage .live-words {
   display: flex;
-  flex-direction: column;
-  width: min(58vw, 880px);
-  padding: 64px 0 28px; /* clears the fixed keyword bar */
-  overflow-y: auto; /* only matters with many long keywords on a short screen */
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 2.6svh, 28px) clamp(26px, 3.6vw, 70px);
 }
-.live-scene-reveal .live-revealed {
-  margin-block: auto;
+.live-stage .live-word {
+  font-size: clamp(3rem, min(7.2vw, 13svh), 9.5rem);
+  transform-origin: 50% 60%;
 }
-.live-scene .live-word {
-  font-size: clamp(2.6rem, min(6.4vw, 11svh), 6.5rem);
+
+.live-stage .live-next {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(14px, 3svh, 34px);
+  justify-items: center;
+  gap: 6px;
+  margin: 0;
+  text-align: center;
 }
-.live-scene .live-band-photo {
-  padding-block: clamp(26px, 5svh, 56px);
+.live-stage .live-next-line {
+  max-width: none;
+  font-size: clamp(1.6rem, min(3vw, 5.2svh), 3rem);
 }
-.live-scene .live-next {
-  margin-top: clamp(20px, 4svh, 44px);
-}
-.live-scene .live-next-line {
-  font-size: clamp(1.8rem, min(3.6vw, 6svh), 3rem);
+.live-stage .live-soon,
+.live-stage .live-flag {
+  margin-top: 6px;
 }

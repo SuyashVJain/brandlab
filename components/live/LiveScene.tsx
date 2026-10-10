@@ -2,12 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import ParallaxLayers from "@/components/ParallaxLayers";
 import StatueScene from "@/components/StatueScene";
 import { SvgFilters, TornCorners } from "@/components/TornPaper";
 import { hero, resetHero, SLICE } from "@/lib/heroState";
 import type { PublicEventState } from "@/lib/live";
 import Revealed from "./Revealed";
+import { StageBulb, StageSide } from "./SceneArt";
 
 /** How far the mountain band opens while it "breathes" (statue heights). */
 const BREATH = 0.09;
@@ -15,7 +15,9 @@ const BREATH = 0.09;
 const BREATH_CYCLE = 8;
 /** Band width when the countdown starts and when it reaches zero. */
 const COUNT_FROM = 0.24;
-const COUNT_TO = 0.6;
+const COUNT_TO = 0.62;
+/** Pixels a depth-1 layer shifts for a full mouse sweep. */
+const MOUSE_TRAVEL = 30;
 
 const noop = () => {};
 
@@ -29,55 +31,81 @@ type LiveSceneProps = {
 };
 
 /**
- * Desktop version of /live: the hero's own statue scene (same StatueScene,
- * ParallaxLayers, paper and torn corners; nothing is duplicated) used as the
- * backdrop for the waiting screen, the countdown and the reveal.
+ * Desktop version of /live: a centred, symmetrical stage for a big screen.
+ * The statue stands in the middle (the hero's StatueScene with
+ * layout="center"; no 3D or shader code is duplicated), BRAND and LAB sit
+ * behind its head, and the countdown and the reveal play over it.
  *
  * The 3D scene reads the shared `hero` state every frame, so this component
- * only has to put that state in its finished pose and animate bandWidth.
- * Loaded with next/dynamic from Live.tsx, so three.js is downloaded on
- * desktop only.
+ * only puts that state in its finished pose and animates bandWidth.
+ * Loaded with next/dynamic from Live.tsx: three.js is desktop-only.
  */
 export default function LiveScene({ data, seconds, animate, reporting, onFail }: LiveSceneProps) {
+  const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
+  const flash = useRef<HTMLDivElement>(null);
+
   const keywords = data?.keywords;
-  const counting = !keywords && seconds !== null;
+  const revealed = Boolean(keywords);
+  const counting = !revealed && seconds !== null;
+  const atZero = counting && seconds === 0;
 
   // Finished hero pose: solid marble, band across the eyes, no loader, no scroll zoom.
   useEffect(() => {
     resetHero(true);
     return () => {
       hero.bandWidth = SLICE.bandWidth;
+      hero.flash = 0;
     };
   }, []);
 
-  // Mouse tilt + parallax (same mapping as the hero).
+  // Mouse: smoothed pointer for the statue's tilt, plus a light parallax on every [data-depth] layer.
   useEffect(() => {
+    const element = root.current;
+    if (!element) return;
+
+    const layers = Array.from(element.querySelectorAll<HTMLElement>("[data-depth]")).map((layer) => ({
+      layer,
+      depth: parseFloat(layer.dataset.depth ?? "0"),
+    }));
     const onMove = (event: PointerEvent) => {
       hero.pointerX = (event.clientX / window.innerWidth) * 2 - 1;
       hero.pointerY = (event.clientY / window.innerHeight) * 2 - 1;
     };
+    const tick = (_time: number, deltaMs: number) => {
+      const ease = 1 - Math.exp((-deltaMs / 1000) * 5);
+      hero.mouseX += (hero.pointerX - hero.mouseX) * ease;
+      hero.mouseY += (hero.pointerY - hero.mouseY) * ease;
+      for (const { layer, depth } of layers) {
+        const x = -hero.mouseX * depth * MOUSE_TRAVEL;
+        const y = -hero.mouseY * depth * MOUSE_TRAVEL;
+        layer.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
+      }
+    };
+
     window.addEventListener("pointermove", onMove, { passive: true });
+    gsap.ticker.add(tick);
     return () => {
       window.removeEventListener("pointermove", onMove);
-      hero.pointerX = hero.pointerY = 0;
+      gsap.ticker.remove(tick);
+      hero.pointerX = hero.pointerY = hero.mouseX = hero.mouseY = 0;
     };
   }, []);
 
-  // The mountain band: breathes while waiting, opens up as the count runs down.
+  // The statue's mountain band: breathes while waiting, opens as the count runs down, and
+  // settles back to breathing after the reveal so the marble face stays visible above the keywords.
   useEffect(() => {
     if (counting) {
       const progress = 1 - Math.min(seconds, 10) / 10;
-      const tween = gsap.to(hero, {
+      const widen = gsap.to(hero, {
         bandWidth: COUNT_FROM + (COUNT_TO - COUNT_FROM) * progress,
         duration: 1,
         ease: "none",
       });
       return () => {
-        tween.kill();
+        widen.kill();
       };
     }
-
     const breathing = gsap
       .timeline()
       .to(hero, { bandWidth: SLICE.bandWidth, duration: 1.2, ease: "power2.out" })
@@ -93,29 +121,38 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
     };
   }, [counting, seconds]);
 
+  // A quick white flash when the count hits zero (on the screen and on the statue's band).
+  useEffect(() => {
+    if (!atZero) return;
+    const burst = gsap
+      .timeline()
+      .fromTo(flash.current, { opacity: 0.9 }, { opacity: 0, duration: 0.55, ease: "power2.out" }, 0)
+      .fromTo(hero, { flash: 1 }, { flash: 0, duration: 0.6, ease: "power2.out" }, 0);
+    return () => {
+      burst.progress(1).kill();
+    };
+  }, [atZero]);
+
   return (
-    <div className={`hero-pin live-scene${keywords ? " is-revealed" : ""}`}>
+    <div ref={root} className={`live-stage${revealed ? " is-revealed" : ""}${counting ? " is-counting" : ""}`}>
       <SvgFilters />
       <div className="hero-paper" aria-hidden />
       <TornCorners />
 
-      {/* Yellow circle, bulb, paper scraps (behind the statue) and clouds (in front). */}
-      <ParallaxLayers stageRef={stage} lit failed={false} reduced={false} />
-
-      <div className="hero-canvas" style={{ zIndex: 2 }} aria-hidden>
-        <StatueScene stageRef={stage} mobile={false} reduced={false} onReady={noop} onError={onFail} />
+      {/* ---------- behind the statue ---------- */}
+      <div className="stage-circle" data-depth="0.18" aria-hidden>
+        <div className="circle" />
+      </div>
+      <div className="stage-sides" data-depth="0.42" aria-hidden>
+        <StageSide />
+        <StageSide mirrored />
+      </div>
+      <div className="stage-bulb is-lit" data-depth="0.6" aria-hidden>
+        <StageBulb />
       </div>
 
-      <div className="live-scene-top">
-        <span className="live-tag">
-          <span className="live-dot" aria-hidden />
-          Live
-        </span>
-        {reporting && <span className="eyebrow">Reporting {reporting}</span>}
-      </div>
-
-      {/* Headline exactly as in the hero (same classes, same LAB lettering). */}
-      <div className="hero-copy" aria-hidden={keywords ? true : undefined}>
+      {/* Headline with the hero's own classes and LAB lettering. The statue's head overlaps it. */}
+      <div className="live-stage-title" data-depth="0.1">
         <h1 className="hero-headline" aria-label="Brand Lab">
           <span className="brand-wrap" aria-hidden>
             <span className="brand">BRAND</span>
@@ -124,16 +161,40 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
             <span className="lab">LAB</span>
           </span>
         </h1>
+      </div>
+
+      {/* ---------- statue ---------- */}
+      <div ref={stage} className="stage-box" aria-hidden />
+      <div className="hero-canvas" style={{ zIndex: 2 }} aria-hidden>
+        <StatueScene
+          stageRef={stage}
+          layout="center"
+          mobile={false}
+          reduced={false}
+          onReady={noop}
+          onError={onFail}
+        />
+      </div>
+
+      {/* ---------- copy ---------- */}
+      <div className="live-stage-top">
+        <span className="live-tag">
+          <span className="live-dot" aria-hidden />
+          Live
+        </span>
+      </div>
+      <div className="live-stage-copy" aria-hidden={revealed || counting ? true : undefined}>
         <p className="tagline">
           Think it. <mark>Name it.</mark> <em>Brand it.</em>
         </p>
-        <p className="hero-blurb">Keywords appear here the moment the event starts.</p>
+        <p className="live-stage-line">Keywords appear here the moment the event starts.</p>
       </div>
+      {reporting && <p className="eyebrow live-stage-reporting">Reporting {reporting}</p>}
 
+      {/* ---------- countdown ---------- */}
       {counting && (
-        <div className="live-scene-count">
-          <p className="eyebrow">{seconds > 0 ? "Keywords in" : "Here they come"}</p>
-          <p className="live-count" role="timer" aria-label={`${seconds} seconds`}>
+        <div className="live-stage-count">
+          <p className="live-count" role="timer" aria-label={`Keywords in ${seconds} seconds`}>
             <span className="swipe">
               <span className="swipe-ink" aria-hidden />
               {seconds}
@@ -142,11 +203,18 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
         </div>
       )}
 
+      {/* ---------- reveal ---------- */}
       {keywords && data && (
-        <div className="live-scene-reveal">
-          <Revealed key={keywords.join("\n")} keywords={keywords} phase={data.phase} animate={animate} />
-        </div>
+        <Revealed
+          key={keywords.join("\n")}
+          keywords={keywords}
+          phase={data.phase}
+          animate={animate}
+          variant="tear"
+        />
       )}
+
+      <div ref={flash} className="live-flash" aria-hidden />
     </div>
   );
 }

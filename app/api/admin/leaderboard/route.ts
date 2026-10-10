@@ -1,17 +1,20 @@
 import { adminOnly } from "@/lib/admin-route";
 import { json } from "@/lib/auth";
+import { readCriteria } from "@/lib/criteria";
 import { db } from "@/lib/db";
-import type { JudgeScore, LeaderRow } from "@/lib/jury-schema";
+import type { JudgeScore, LeaderboardData, LeaderRow } from "@/lib/jury-schema";
 
 /**
  * GET /api/admin/leaderboard (admin only)
  * The `leaderboard` view, best average first, with the participant's name
- * (admins only; judges never see it) and every judge's own scores.
+ * (admins only; judges never see it), every judge's points per criterion
+ * (from score_values) and the criteria themselves for the labels.
  */
 export async function GET(request: Request) {
   return adminOnly(request, "api/admin/leaderboard", async () => {
     const sql = db();
-    const [rows, scores] = await Promise.all([
+    const [criteria, rows, scores] = await Promise.all([
+      readCriteria(),
       sql`
         select l.id, l.code, l.event_name, l.avg_total, l.judge_count, p.full_name
         from leaderboard l
@@ -19,8 +22,11 @@ export async function GET(request: Request) {
         order by l.avg_total desc nulls last, l.code
       `,
       sql`
-        select sc.submission_id, st.email as judge, sc.name_score, sc.keyword_score, sc.design_score,
-               sc.clarity_score, sc.impact_score, sc.total, sc.notes
+        select sc.submission_id, st.email as judge, sc.total, sc.notes,
+               coalesce(
+                 (select jsonb_object_agg(v.criterion_id, v.points) from score_values v where v.score_id = sc.id),
+                 '{}'::jsonb
+               ) as by_criterion
         from scores sc
         join staff st on st.id = sc.judge_id
         order by st.email
@@ -30,16 +36,7 @@ export async function GET(request: Request) {
     const byJudge = new Map<string, JudgeScore[]>();
     for (const score of scores) {
       const list = byJudge.get(score.submission_id) ?? [];
-      list.push({
-        judge: score.judge,
-        name_score: score.name_score,
-        keyword_score: score.keyword_score,
-        design_score: score.design_score,
-        clarity_score: score.clarity_score,
-        impact_score: score.impact_score,
-        total: score.total,
-        notes: score.notes,
-      });
+      list.push({ judge: score.judge, total: score.total, notes: score.notes, by_criterion: score.by_criterion });
       byJudge.set(score.submission_id, list);
     }
 
@@ -52,6 +49,8 @@ export async function GET(request: Request) {
       judge_count: Number(row.judge_count),
       judges: byJudge.get(row.id) ?? [],
     }));
-    return json({ leaderboard });
+
+    const body: LeaderboardData = { criteria, leaderboard };
+    return json(body);
   });
 }

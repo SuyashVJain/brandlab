@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { TornPanel } from "@/components/shared/Paper";
-import { CRITERIA, type LeaderRow } from "@/lib/jury-schema";
+import type { Criterion, LeaderboardData, LeaderRow } from "@/lib/jury-schema";
 import { callApi } from "./api";
 
 /** One CSV cell: quoted, and never starting with a character a spreadsheet would run as a formula. */
@@ -33,16 +33,18 @@ function toCsv(rows: LeaderRow[]): string {
 /** Ranked results for admins, with each judge's scores and a CSV export. */
 export default function LeaderboardPanel() {
   const [rows, setRows] = useState<LeaderRow[] | null>(null);
+  const [criteria, setCriteria] = useState<Criterion[]>([]);
   const [error, setError] = useState("");
   const [open, setOpen] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let alive = true;
-    callApi<{ leaderboard: LeaderRow[] }>("/api/admin/leaderboard").then((result) => {
+    callApi<LeaderboardData>("/api/admin/leaderboard").then((result) => {
       if (!alive) return;
       if (!result.ok) return setError(result.error);
       setError("");
+      setCriteria(result.data.criteria);
       setRows(result.data.leaderboard);
     });
     return () => {
@@ -130,9 +132,9 @@ export default function LeaderboardPanel() {
                             <thead>
                               <tr>
                                 <th scope="col">Judge</th>
-                                {CRITERIA.map((criterion) => (
-                                  <th key={criterion.key} scope="col" className="adm-num">
-                                    {criterion.short} /{criterion.max}
+                                {criteria.map((criterion) => (
+                                  <th key={criterion.id} scope="col" className="adm-num adm-crit-head">
+                                    {criterion.label} /{criterion.max_points}
                                   </th>
                                 ))}
                                 <th scope="col" className="adm-num">
@@ -145,9 +147,9 @@ export default function LeaderboardPanel() {
                               {row.judges.map((judge) => (
                                 <tr key={judge.judge}>
                                   <td>{judge.judge}</td>
-                                  {CRITERIA.map((criterion) => (
-                                    <td key={criterion.key} className="adm-num">
-                                      {judge[criterion.key]}
+                                  {criteria.map((criterion) => (
+                                    <td key={criterion.id} className="adm-num">
+                                      {judge.by_criterion[String(criterion.id)] ?? "-"}
                                     </td>
                                   ))}
                                   <td className="adm-num adm-avg">{judge.total}</td>

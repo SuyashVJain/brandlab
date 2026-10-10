@@ -3,13 +3,14 @@
 import { useState } from "react";
 import type { AdminState, StaffRole } from "@/lib/admin-schema";
 import AdminPanel from "./AdminPanel";
+import CriteriaPanel from "./CriteriaPanel";
 import LeaderboardPanel from "./LeaderboardPanel";
 import ScoringPanel from "./ScoringPanel";
 import StaffPanel from "./StaffPanel";
 
 const TABS = [
   { id: "control", label: "Event control" },
-  { id: "scoring", label: "Submissions & scoring" },
+  { id: "criteria", label: "Criteria" },
   { id: "leaderboard", label: "Leaderboard" },
   { id: "staff", label: "Staff" },
 ] as const;
@@ -24,8 +25,8 @@ type AdminTabsProps = {
 };
 
 /**
- * The /admin screen. Admins get four tabs; jury accounts get only the
- * scoring view (and the API refuses them everything else anyway).
+ * The /admin screen. Admins run the event (four tabs) and do not score;
+ * jury accounts get only the scoring view. The API enforces the same split.
  */
 export default function AdminTabs({ role, email, initialState }: AdminTabsProps) {
   const [tab, setTab] = useState<TabId>("control");
@@ -57,9 +58,9 @@ export default function AdminTabs({ role, email, initialState }: AdminTabsProps)
       </div>
 
       {/* The other tabs load fresh data each time they are opened. */}
-      {tab === "scoring" && (
-        <div id="adm-view-scoring" role="tabpanel" aria-labelledby="adm-tab-scoring">
-          <ScoringPanel />
+      {tab === "criteria" && (
+        <div id="adm-view-criteria" role="tabpanel" aria-labelledby="adm-tab-criteria">
+          <CriteriaPanel />
         </div>
       )}
       {tab === "leaderboard" && (

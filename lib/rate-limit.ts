@@ -5,9 +5,13 @@
 // reset on a cold start. That is enough to slow down a script hammering one
 // instance, but it is not a hard global limit. Swap this for a shared store
 // (for example a table in Neon or Upstash) if a strict limit is ever needed.
+//
+// The key is the client IP, and campus Wi-Fi puts everyone behind ONE shared
+// IP. The default is therefore generous (200 per 10 minutes) so a room full of
+// students can all register; routes that need to be stricter pass their own limit.
 
 const WINDOW_MS = 10 * 60 * 1000;
-const LIMIT = 5;
+const LIMIT = 200;
 
 const hits = new Map<string, number[]>();
 

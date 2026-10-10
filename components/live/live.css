@@ -186,3 +186,115 @@
 .live > .sheet-inner {
   z-index: 3;
 }
+
+/* ==========================================================================
+   Desktop scene (LiveScene): the hero's statue as the backdrop.
+   The layout classes (.hero-pin, .hero-copy, .hero-canvas ...) are the hero's
+   own, from app/globals.css. Only the live-specific pieces are styled here.
+   ========================================================================== */
+
+.live-scene-loading {
+  min-height: 100svh;
+  background: var(--paper);
+}
+
+/* LIVE tag + reporting line, where the hero has its logo bar. */
+.live-scene-top {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: clamp(18px, 3.4svh, 34px) 0 0 clamp(60px, 9vw, 150px);
+  transition: opacity 0.4s ease-out;
+}
+.live-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 12px 5px 10px;
+  border: 2px solid var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.live-dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--royal);
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--royal);
+  animation: live-pulse 1.6s ease-out infinite;
+}
+@keyframes live-pulse {
+  from {
+    opacity: 0.7;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: 3.2;
+  }
+}
+
+/* Countdown: lower right, over the statue's shoulder so the face stays visible. */
+.live-scene-count {
+  position: absolute;
+  z-index: 5;
+  right: clamp(24px, 5vw, 90px);
+  bottom: clamp(20px, 7svh, 70px);
+  display: grid;
+  justify-items: start; /* label sits over the number's left edge, clear of the bulb */
+  gap: 4px;
+}
+.live-scene .live-count {
+  font-size: min(25vw, 42svh);
+}
+
+/* Reveal: the keyword band takes the headline's place, statue still behind on the right. */
+.live-scene .hero-copy {
+  transition: opacity 0.5s ease-out;
+}
+.live-scene.is-revealed .hero-copy,
+.live-scene.is-revealed .live-scene-top {
+  opacity: 0;
+  pointer-events: none;
+}
+.live-scene-reveal {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  bottom: 0;
+  left: clamp(18px, 5vw, 76px);
+  display: flex;
+  flex-direction: column;
+  width: min(58vw, 880px);
+  padding: 64px 0 28px; /* clears the fixed keyword bar */
+  overflow-y: auto; /* only matters with many long keywords on a short screen */
+}
+.live-scene-reveal .live-revealed {
+  margin-block: auto;
+}
+.live-scene .live-word {
+  font-size: clamp(2.6rem, min(6.4vw, 11svh), 6.5rem);
+}
+.live-scene .live-band-photo {
+  padding-block: clamp(26px, 5svh, 56px);
+}
+.live-scene .live-next {
+  margin-top: clamp(20px, 4svh, 44px);
+}
+.live-scene .live-next-line {
+  font-size: clamp(1.8rem, min(3.6vw, 6svh), 3rem);
+}

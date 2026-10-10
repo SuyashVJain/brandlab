@@ -1,5 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { useCallback, useState } from "react";
 import TornEdge from "@/components/how-it-works/TornEdge";
 import { siteContent } from "@/lib/site-content";
 import { useMediaQuery } from "@/lib/useMediaQuery";
@@ -9,16 +11,43 @@ import "@/components/shared/shared.css";
 import "@/components/how-it-works/how-it-works.css"; // styles for the torn strip
 import "./live.css";
 
+// Desktop only: the hero's 3D statue scene. A separate chunk, so phones never download three.js.
+const LiveScene = dynamic(() => import("./LiveScene"), {
+  ssr: false,
+  loading: () => <div className="live-scene-loading" aria-hidden />,
+});
+
 /**
  * The public keyword reveal screen. No login and no participant code.
  *   waiting   -> "Stand by"
  *   countdown -> seconds to the reveal, on the server clock
  *   revealed  -> the keywords (animated only if this page watched them arrive)
+ * On desktop the same three states play over the hero's statue scene (LiveScene).
  */
 export default function Live() {
   const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const { data, seconds, reconnecting, animate } = useEventState();
   const reporting = siteContent.timeline[0].note;
+
+  // Desktop with a mouse and normal motion gets the statue scene. Phones,
+  // tablets and reduced motion keep the plain screen below, and so does any
+  // device where WebGL or the model fails.
+  const desktop = useMediaQuery("(min-width: 821px) and (pointer: fine)");
+  const [sceneFailed, setSceneFailed] = useState(false);
+  const failScene = useCallback(() => setSceneFailed(true), []);
+
+  if (desktop && !reduced && !sceneFailed) {
+    return (
+      <>
+        <LiveScene data={data} seconds={seconds} animate={animate} reporting={reporting} onFail={failScene} />
+        {reconnecting && (
+          <p className="live-note" role="status">
+            Reconnecting...
+          </p>
+        )}
+      </>
+    );
+  }
 
   let view;
   if (data?.keywords) {

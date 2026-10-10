@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -315,13 +316,13 @@ export default function Hero() {
                 </span>
               </li>
             </ul>
-            <a className="register intro-rise" href="#register">
+            <Link className="register intro-rise" href="/register">
               <span>Register now</span>
               <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <circle cx="16" cy="16" r="14" />
                 <path d="M10 16h12M17 11l5 5-5 5" />
               </svg>
-            </a>
+            </Link>
           </footer>
 
           {/* ---------- loader + transition overlays ---------- */}

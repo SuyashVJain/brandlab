@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import TornEdge from "@/components/how-it-works/TornEdge";
 import { TornPanel } from "@/components/shared/Paper";
 import { useScrollReveal } from "@/components/shared/useScrollReveal";
 import type { RegisterResult } from "@/lib/register-schema";
@@ -9,7 +9,6 @@ import { siteContent } from "@/lib/site-content";
 import LookupPanel from "./LookupPanel";
 import RegisterForm from "./RegisterForm";
 import SuccessCard from "./SuccessCard";
-import "@/components/how-it-works/how-it-works.css"; // styles for the shared torn strip
 import "./register.css";
 
 /* ------------------------------------------------------------------------ */
@@ -107,60 +106,69 @@ export default function Register() {
   return (
     <section ref={root} id="register" className="sheet reg" aria-labelledby="register-title">
       <div className="hero-paper" aria-hidden />
-      <TornEdge />
 
-      <div className="sheet-inner reg-grid">
-        {/* ---------- heading + who can join ---------- */}
-        <header className="reg-intro" data-reveal-batch>
-          <h2 id="register-title" className="section-title" data-reveal>
-            <span className="swipe">
-              <span className="swipe-ink" data-swipe aria-hidden />
-              Register
-            </span>
-          </h2>
-          <ul className="reg-points" data-reveal>
-            <li>{siteContent.eligibility}</li>
-            <li>{siteContent.fee}</li>
-          </ul>
-        </header>
+      <div className="sheet-inner">
+        {/* ---------- top bar: this section is its own page (/register) ---------- */}
+        <nav className="reg-topbar" aria-label="Page">
+          <Link className="eyebrow reg-back" href="/">
+            <span aria-hidden>&larr;</span> Back to home
+          </Link>
+        </nav>
 
-        <div className="reg-main" data-reveal-batch>
-          {/* ---------- form / success / closed ---------- */}
-          <div data-reveal>
-            <TornPanel seed={117}>
-              {saved ? (
-                <SuccessCard registration={saved} onClear={() => writeSaved(null)} />
-              ) : status === "open" ? (
-                <RegisterForm onSuccess={writeSaved} onClosed={() => setStatus("closed")} />
-              ) : status === "closed" ? (
-                <div className="reg-notice" role="status">
-                  <h3 className="reg-heading">Registration is closed</h3>
-                  <p>New entries are not being accepted right now. Already registered? Check your entry below.</p>
-                </div>
-              ) : status === "error" ? (
-                <div className="reg-notice" role="alert">
-                  <h3 className="reg-heading">Could not load the form</h3>
-                  <p>We could not check whether registration is open. Check your connection and try again.</p>
-                  <button type="button" className="reg-ghost" onClick={retry}>
-                    Try again
-                  </button>
-                </div>
-              ) : (
-                <div className="reg-notice" role="status">
-                  <p>Checking registration status...</p>
-                </div>
-              )}
-            </TornPanel>
-          </div>
+        <div className="reg-grid">
+          {/* ---------- heading + who can join ---------- */}
+          <header className="reg-intro" data-reveal-batch>
+            <h1 id="register-title" className="section-title" data-reveal>
+              <span className="swipe">
+                <span className="swipe-ink" data-swipe aria-hidden />
+                Register
+              </span>
+            </h1>
+            <ul className="reg-points" data-reveal>
+              <li>{siteContent.eligibility}</li>
+              <li>{siteContent.fee}</li>
+            </ul>
+          </header>
 
-          {/* ---------- check my registration ---------- */}
-          <div data-reveal>
-            <TornPanel seed={133}>
-              <LookupPanel />
-            </TornPanel>
+          <div className="reg-main" data-reveal-batch>
+            {/* ---------- form / success / closed ---------- */}
+            <div data-reveal>
+              <TornPanel seed={117}>
+                {saved ? (
+                  <SuccessCard registration={saved} onClear={() => writeSaved(null)} />
+                ) : status === "open" ? (
+                  <RegisterForm onSuccess={writeSaved} onClosed={() => setStatus("closed")} />
+                ) : status === "closed" ? (
+                  <div className="reg-notice" role="status">
+                    <h3 className="reg-heading">Registration is closed</h3>
+                    <p>New entries are not being accepted right now. Already registered? Check your entry below.</p>
+                  </div>
+                ) : status === "error" ? (
+                  <div className="reg-notice" role="alert">
+                    <h3 className="reg-heading">Could not load the form</h3>
+                    <p>We could not check whether registration is open. Check your connection and try again.</p>
+                    <button type="button" className="reg-ghost" onClick={retry}>
+                      Try again
+                    </button>
+                  </div>
+                ) : (
+                  <div className="reg-notice" role="status">
+                    <p>Checking registration status...</p>
+                  </div>
+                )}
+              </TornPanel>
+            </div>
+
+            {/* ---------- check my registration ---------- */}
+            <div data-reveal>
+              <TornPanel seed={133}>
+                <LookupPanel />
+              </TornPanel>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
+

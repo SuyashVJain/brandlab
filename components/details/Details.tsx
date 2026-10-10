@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, type MouseEvent } from "react";
+import Link from "next/link";
+import { useRef } from "react";
 import { Crosshair, SectionTitle, TornPanel } from "@/components/shared/Paper";
 import { useScrollReveal } from "@/components/shared/useScrollReveal";
 import { detailFacts, siteContent } from "@/lib/site-content";
@@ -13,15 +14,6 @@ const HEAVIEST = Math.max(...judging.map((criterion) => criterion.weight));
 export default function Details() {
   const root = useRef<HTMLElement>(null);
   useScrollReveal(root);
-
-  // Smooth scroll to the register placeholder (instant with reduced motion).
-  const goToRegister = (event: MouseEvent<HTMLAnchorElement>) => {
-    const target = document.getElementById("register");
-    if (!target) return;
-    event.preventDefault();
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-  };
 
   return (
     <section ref={root} id="details" className="sheet details" aria-labelledby="details-title">
@@ -134,13 +126,13 @@ export default function Details() {
         {/* ---------- call to action ---------- */}
         <div className="details-cta" data-reveal-batch>
           <div data-reveal>
-            <a className="register" href="#register" onClick={goToRegister}>
+            <Link className="register" href="/register">
               <span>Register now</span>
               <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <circle cx="16" cy="16" r="14" />
                 <path d="M10 16h12M17 11l5 5-5 5" />
               </svg>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

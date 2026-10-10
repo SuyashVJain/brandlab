@@ -1,7 +1,35 @@
 /* ==========================================================================
-   Register
+   Register (its own page: /register)
    Mobile first. Inputs are 16px so iOS does not zoom; controls are >= 44px tall.
    ========================================================================== */
+
+/* The section is its own page: fill the screen, with a small bar on top. */
+.reg {
+  min-height: 100svh;
+  padding-top: clamp(20px, 3vw, 36px);
+}
+
+.reg-topbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: clamp(44px, 8vw, 96px);
+}
+.reg-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.reg-back:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.reg-back:focus-visible {
+  outline: 3px solid var(--royal);
+  outline-offset: 4px;
+}
 
 .reg-grid {
   display: grid;

@@ -178,10 +178,10 @@ export default function LiveScene({ data, seconds, animate, reporting, onFail }:
 
       {/* ---------- copy ---------- */}
       <div className="live-stage-top">
-        <span className="live-tag">
+        {/* <span className="live-tag">
           <span className="live-dot" aria-hidden />
           Live
-        </span>
+        </span> */}
       </div>
       <div className="live-stage-copy" aria-hidden={revealed || counting ? true : undefined}>
         <p className="tagline">

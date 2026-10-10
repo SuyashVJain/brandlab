@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, SUBMIT_LIMIT } from "@/lib/rate-limit";
 import { verifySchema, type VerifyResult } from "@/lib/submit-schema";
 import { holdUntil, json, readBody, tooMany } from "@/lib/submit-server";
 
@@ -45,7 +45,7 @@ async function verify(body: unknown): Promise<VerifyResult> {
 export async function POST(request: Request) {
   const started = Date.now();
 
-  const limit = rateLimit(`submit-verify:${clientIp(request)}`, 60, 10 * 60 * 1000);
+  const limit = rateLimit(`submit-verify:${clientIp(request)}`, SUBMIT_LIMIT);
   if (!limit.ok) return tooMany(limit.retryAfter);
 
   let result: VerifyResult = { ok: false };

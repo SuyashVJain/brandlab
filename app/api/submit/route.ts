@@ -1,6 +1,6 @@
 import { BlobNotFoundError, del, head } from "@vercel/blob";
 import { db } from "@/lib/db";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, SUBMIT_LIMIT } from "@/lib/rate-limit";
 import { fieldErrors } from "@/lib/register-schema";
 import { saveSchema } from "@/lib/submit-schema";
 import {
@@ -25,7 +25,7 @@ import {
  *   403  submissions are not open, or the deadline has passed
  */
 export async function POST(request: Request) {
-  const limit = rateLimit(`submit:${clientIp(request)}`, 300, 10 * 60 * 1000);
+  const limit = rateLimit(`submit:${clientIp(request)}`, SUBMIT_LIMIT);
   if (!limit.ok) return tooMany(limit.retryAfter);
 
   const parsed = saveSchema.safeParse(await readBody(request));

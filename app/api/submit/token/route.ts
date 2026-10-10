@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { handleUpload } from "@vercel/blob/client";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, SUBMIT_LIMIT } from "@/lib/rate-limit";
 import { MAX_POSTER_BYTES, POSTER_TYPES, posterExtension, posterFileError, tokenSchema } from "@/lib/submit-schema";
 import { blobToken, findParticipant, json, NO_MATCH, readBody, submissionGate, tooMany } from "@/lib/submit-server";
 
@@ -28,7 +28,7 @@ class Refusal extends Error {
 }
 
 export async function POST(request: Request) {
-  const limit = rateLimit(`submit-token:${clientIp(request)}`, 300, 10 * 60 * 1000);
+  const limit = rateLimit(`submit-token:${clientIp(request)}`, SUBMIT_LIMIT);
   if (!limit.ok) return tooMany(limit.retryAfter);
 
   const parsed = tokenSchema.safeParse(await readBody(request));

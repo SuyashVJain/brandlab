@@ -13,6 +13,15 @@
 const WINDOW_MS = 10 * 60 * 1000;
 const LIMIT = 200;
 
+/**
+ * Limit for the three poster submission routes (/api/submit, /api/submit/token,
+ * /api/submit/verify): 600 per 10 minutes per IP. On event day the whole room
+ * submits within the same few minutes from the campus Wi-Fi, which is ONE shared
+ * IP, and each student makes several calls (verify, upload token, submit, retries).
+ * It stays per IP so a single script still cannot hammer the routes without end.
+ */
+export const SUBMIT_LIMIT = 600;
+
 const hits = new Map<string, number[]>();
 
 export type RateLimitResult = { ok: boolean; retryAfter: number };

@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import AdminPanel from "@/components/admin/AdminPanel";
+import AdminTabs from "@/components/admin/AdminTabs";
 import LogoutButton from "@/components/admin/LogoutButton";
-import { TornPanel } from "@/components/shared/Paper";
 import { SvgFilters } from "@/components/TornPaper";
 import { staffFromToken } from "@/lib/auth";
 import { readAdminState } from "@/lib/event-state";
@@ -46,13 +45,12 @@ async function AdminContent() {
         </div>
       </header>
 
-      {staff.role === "admin" ? (
-        <AdminPanel initialState={await readAdminState()} />
-      ) : (
-        <TornPanel seed={263}>
-          <h2 className="adm-heading">Jury scoring opens later</h2>
-        </TornPanel>
-      )}
+      {/* Admins get every tab; jury accounts get the scoring view only. */}
+      <AdminTabs
+        role={staff.role}
+        email={staff.email}
+        initialState={staff.role === "admin" ? await readAdminState() : null}
+      />
     </>
   );
 }

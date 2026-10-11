@@ -1,7 +1,7 @@
 import { NeonDbError } from "@neondatabase/serverless";
 import { isMissingColumn } from "@/lib/criteria";
 import { db } from "@/lib/db";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, rateLimit, REGISTER_LIMIT } from "@/lib/rate-limit";
 import { fieldErrors, registerSchema, type RegisterResult } from "@/lib/register-schema";
 
 /**
@@ -39,7 +39,7 @@ function uniqueClash(error: unknown): "code" | "email" | "enrollment_no" | null 
 }
 
 export async function POST(request: Request) {
-  const limit = rateLimit(`register:${clientIp(request)}`);
+  const limit = rateLimit(`register:${clientIp(request)}`, REGISTER_LIMIT);
   if (!limit.ok) {
     return json({ error: "Too many attempts. Please try again in a few minutes." }, 429, {
       "Retry-After": String(limit.retryAfter),

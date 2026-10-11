@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, LOOKUP_LIMIT, rateLimit } from "@/lib/rate-limit";
 import { lookupSchema, type LookupResult } from "@/lib/register-schema";
 
 /**
@@ -41,8 +41,7 @@ async function findParticipant(body: unknown): Promise<LookupResult> {
 export async function POST(request: Request) {
   const started = Date.now();
 
-  // Stricter than the default: 60 lookups per 10 minutes per IP.
-  const limit = rateLimit(`lookup:${clientIp(request)}`, 60, 10 * 60 * 1000);
+  const limit = rateLimit(`lookup:${clientIp(request)}`, LOOKUP_LIMIT);
   if (!limit.ok) {
     return json({ error: "Too many attempts. Please try again in a few minutes." }, 429, {
       "Retry-After": String(limit.retryAfter),

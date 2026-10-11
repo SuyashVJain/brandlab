@@ -95,7 +95,7 @@ Individuals or pairs register with their programme and semester and receive a pa
 
 ### Live stage: countdown and keyword reveal
 
-`/live` is the screen projected in the hall. It polls the server every three seconds, counts down on the server clock, and shows the keywords to every device at the same moment.
+`/live` is the screen projected in the hall. It polls the server about every four seconds, counts down on the server clock, and shows the keywords to every device at the same moment.
 
 | Stand by | Countdown |
 |---|---|
@@ -198,7 +198,7 @@ flowchart LR
 
     P --> N
     A --> N
-    L -- polls /api/event-state every 3 s --> R
+    L -- polls /api/event-state every 4 s --> R
     P -- register, verify, submit --> R
     A -- signed session cookie --> R
     R --> D

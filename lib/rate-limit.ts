@@ -7,11 +7,24 @@
 // (for example a table in Neon or Upstash) if a strict limit is ever needed.
 //
 // The key is the client IP, and campus Wi-Fi puts everyone behind ONE shared
-// IP. The default is therefore generous (200 per 10 minutes) so a room full of
-// students can all register; routes that need to be stricter pass their own limit.
+// IP. Every limit below is therefore sized for a whole room of students behind
+// that one address, and each route passes its own named limit.
 
 const WINDOW_MS = 10 * 60 * 1000;
-const LIMIT = 200;
+
+/** /api/register: 200 per 10 minutes per IP. A room of about 150 students registers once each, with room for retries. */
+export const REGISTER_LIMIT = 200;
+
+/**
+ * /api/lookup ("check my registration"): 300 per 10 minutes per IP. On event day
+ * many students look their code up at the door within the same few minutes, all
+ * from the shared campus IP. Guessing codes is still slowed down: a lookup needs
+ * the matching email as well, and the route answers in constant time.
+ */
+export const LOOKUP_LIMIT = 300;
+
+/** /api/staff/login: 10 per 10 minutes per IP. Deliberately strict, to slow password guessing; only a few staff sign in. */
+export const LOGIN_LIMIT = 10;
 
 /**
  * Limit for the three poster submission routes (/api/submit, /api/submit/token,
@@ -30,7 +43,7 @@ export type RateLimitResult = { ok: boolean; retryAfter: number };
  * Sliding window: at most `limit` calls per `windowMs` for a key.
  * `retryAfter` is in seconds (0 when the call is allowed).
  */
-export function rateLimit(key: string, limit = LIMIT, windowMs = WINDOW_MS): RateLimitResult {
+export function rateLimit(key: string, limit = REGISTER_LIMIT, windowMs = WINDOW_MS): RateLimitResult {
   const now = Date.now();
   const recent = (hits.get(key) ?? []).filter((time) => now - time < windowMs);
 

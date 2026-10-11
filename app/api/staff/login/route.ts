@@ -4,7 +4,7 @@ import { readJson } from "@/lib/admin-route";
 import { loginSchema } from "@/lib/admin-schema";
 import { json } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { clientIp, LOGIN_LIMIT, rateLimit } from "@/lib/rate-limit";
 import { sessionCookie, signSession } from "@/lib/session";
 
 /**
@@ -25,7 +25,7 @@ function getDummyHash() {
 }
 
 export async function POST(request: Request) {
-  const limit = rateLimit(`login:${clientIp(request)}`, 10, 10 * 60 * 1000);
+  const limit = rateLimit(`login:${clientIp(request)}`, LOGIN_LIMIT);
   if (!limit.ok) {
     return json({ error: "Too many attempts. Please try again in a few minutes." }, 429, {
       "Retry-After": String(limit.retryAfter),

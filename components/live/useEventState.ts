@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import { REVEAL_PHASES, type PublicEventState } from "@/lib/live";
 
-const POLL_MS = 3000;
+/** Normal gap between polls. Each gap is moved by up to POLL_JITTER_MS either way. */
+const POLL_MS = 4000;
+/** So a room of browsers that loaded together does not poll in the same instant. */
+const POLL_JITTER_MS = 500;
+/** Gap between polls while the tab is in the background. */
+const HIDDEN_POLL_MS = 10000;
 /** Once the countdown hits zero, ask again quickly until the keywords arrive. */
 const FAST_POLL_MS = 700;
 const TICK_MS = 200;
@@ -21,9 +26,15 @@ export type LiveState = {
 };
 
 /**
- * Polls GET /api/event-state every 3 seconds and keeps a countdown synced to
- * the server clock. Polling pauses while the tab is hidden and refetches the
- * moment it becomes visible again.
+ * Polls GET /api/event-state about every 4 seconds (with a little jitter per
+ * browser) and keeps a countdown synced to the server clock. While the tab is
+ * hidden it polls every 10 seconds, and it refetches the moment the tab is
+ * visible again.
+ *
+ * The countdown never depends on when a poll lands: it is computed on every
+ * tick from revealAt and the server clock offset. At zero the hook switches to
+ * fast polling until the keywords arrive, so the reveal is on time even when
+ * the regular poll would have been seconds away.
  */
 export function useEventState(): LiveState {
   const [data, setData] = useState<PublicEventState | null>(null);
@@ -36,6 +47,8 @@ export function useEventState(): LiveState {
     let latest: PublicEventState | null = null;
     let inFlight = false;
     let lastFetch = 0;
+    // How long to wait after the last request before the next regular one. Re-drawn after every request.
+    let gap = POLL_MS;
     // Did this page see the "not revealed yet" state? Opening the page after
     // the reveal must show the keywords at once, with no animation.
     let sawWaiting = false;
@@ -48,6 +61,7 @@ export function useEventState(): LiveState {
       if (!alive || inFlight) return;
       inFlight = true;
       lastFetch = Date.now();
+      gap = POLL_MS + (Math.random() * 2 - 1) * POLL_JITTER_MS;
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
@@ -82,7 +96,11 @@ export function useEventState(): LiveState {
     };
 
     const tick = () => {
-      if (document.hidden) return; // paused while the tab is in the background
+      // In the background: nothing to draw, just a slow poll so the state is not stale on return.
+      if (document.hidden) {
+        if (Date.now() - lastFetch >= HIDDEN_POLL_MS) load();
+        return;
+      }
 
       let remaining: number | null = null;
       if (latest && !latest.keywords && latest.revealAt && REVEAL_PHASES.includes(latest.phase)) {
@@ -91,7 +109,7 @@ export function useEventState(): LiveState {
       setSeconds(remaining === null ? null : Math.max(0, Math.ceil(remaining / 1000)));
 
       const waitingForKeywords = remaining !== null && remaining <= 0;
-      if (Date.now() - lastFetch >= (waitingForKeywords ? FAST_POLL_MS : POLL_MS)) load();
+      if (Date.now() - lastFetch >= (waitingForKeywords ? FAST_POLL_MS : gap)) load();
     };
 
     const onVisibility = () => {

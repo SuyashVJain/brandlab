@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Montserrat, Permanent_Marker } from "next/font/google";
+import VercelInsights from "@/components/shared/VercelInsights";
 import "./globals.css";
 
 // Heavy condensed display face for "BRAND" and the loader counter.
@@ -57,7 +58,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${anton.variable} ${marker.variable} ${montserrat.variable} antialiased`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <VercelInsights />
+      </body>
     </html>
   );
 }

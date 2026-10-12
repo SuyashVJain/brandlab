@@ -58,7 +58,7 @@ export const siteContent = {
 
   /** Steps in order. Only the first one carries a time and room. */
   timeline: [
-    { title: "Reporting and check-in", note: "10:00 AM, Seminar Hall 2" },
+    { title: "Reporting and check-in", note: "12:30 PM, Seminar Hall 2" },
     { title: "Briefing" },
     { title: "Keywords revealed" },
     { title: "Naming + design round" },
@@ -120,7 +120,7 @@ export const siteContent = {
 
   /** Fixed choices on the registration form. The form, the server check and the admin screens all read these. */
   registration: {
-    programs: ["B.Tech CSIT", "B.Tech SAR", "B.Tech AIML", "B.Sc SAR"],
+    programs: ["B.Tech CSIT", "B.Tech SAR", "B.Tech AIML", "B.Sc Data Science"],
     semesters: [1, 2, 3, 4, 5, 6, 7, 8],
   },
 

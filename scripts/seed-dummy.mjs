@@ -41,7 +41,7 @@ const sql = neon(process.env.DATABASE_URL);
 /* ---------- the 12 teams ---------- */
 
 // Same programme list as lib/site-content.ts (registration.programs).
-const PROGRAMS = ["B.Tech CSIT", "B.Tech SAR", "B.Tech AIML", "B.Sc SAR"];
+const PROGRAMS = ["B.Tech CSIT", "B.Tech SAR", "B.Tech AIML", "B.Sc Data Science"];
 
 const TEAMS = [
   { name: "Aarav Sharma", event: "Inkwell Fest", tagline: "Where every idea leaves a mark" },

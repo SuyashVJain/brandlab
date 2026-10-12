@@ -24,12 +24,12 @@ Items marked **TBD** are not decided yet. Do not invent them. Show a clearly vis
 - Eligibility: Open to SUAS students only.
 - Fee: Free to participate.
 - Bring: Bring your own laptop or device. Use any tools you like.
-- Reporting: 10:00 AM, Seminar Hall 2
+- Reporting: 12:30 PM, Seminar Hall 2
 - Tools: any tools. Use of AI tools is allowed.
 
 ## Day timeline (final)
 Steps are shown in order only, with no per-item times, duration or end time. Only the first step shows extra info.
-1. Reporting and check-in (10:00 AM, Seminar Hall 2)
+1. Reporting and check-in (12:30 PM, Seminar Hall 2)
 2. Briefing
 3. Keywords revealed
 4. Naming + design round

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { TornPanel } from "@/components/shared/Paper";
 import { useScrollReveal } from "@/components/shared/useScrollReveal";
 import type { RegisterResult } from "@/lib/register-schema";
+import { clearParticipant } from "@/lib/participant-storage";
 import { siteContent } from "@/lib/site-content";
 import LookupPanel from "./LookupPanel";
 import RegisterForm from "./RegisterForm";
@@ -142,7 +143,13 @@ export default function Register() {
             <div data-reveal>
               <TornPanel seed={117}>
                 {saved ? (
-                  <SuccessCard registration={saved} onClear={() => writeSaved(null)} />
+                  <SuccessCard
+                    registration={saved}
+                    onClear={() => {
+                      writeSaved(null);
+                      clearParticipant(); // the details saved for /submit go too
+                    }}
+                  />
                 ) : status === "open" ? (
                   <RegisterForm onSuccess={writeSaved} onClosed={() => setStatus("closed")} />
                 ) : status === "closed" ? (

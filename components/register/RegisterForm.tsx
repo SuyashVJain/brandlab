@@ -14,6 +14,7 @@ import {
   type RegisterFields,
   type RegisterResult,
 } from "@/lib/register-schema";
+import { saveParticipant } from "@/lib/participant-storage";
 import { siteContent } from "@/lib/site-content";
 
 const PROGRAMS = siteContent.registration.programs;
@@ -224,7 +225,10 @@ export default function RegisterForm({
       const data = await response.json().catch(() => ({}));
 
       if (response.status === 201) {
-        onSuccess(data as RegisterResult);
+        const result = data as RegisterResult;
+        // Remember the email and code in this browser, so /submit can pre-fill them.
+        saveParticipant({ email: parsed.data.email, code: result.code });
+        onSuccess(result);
       } else if (response.status === 400 && data.fields) {
         setErrors(data.fields);
         focusFirstError();

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { TornPanel } from "@/components/shared/Paper";
 import { formatIst } from "@/lib/ist";
+import { saveParticipant } from "@/lib/participant-storage";
 import type { SubmissionInfo, VerifyResult } from "@/lib/submit-schema";
 import SubmitForm from "./SubmitForm";
 import SubmittedCard from "./SubmittedCard";
@@ -110,6 +111,8 @@ export default function Submit() {
     setNotice("");
     setVerified(result);
     writeSaved(pair);
+    // Remember the pair in this browser, so the fields are pre-filled next time.
+    saveParticipant(pair);
     return null;
   }, []);
 

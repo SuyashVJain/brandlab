@@ -1,6 +1,7 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
+import { useId, useState, useSyncExternalStore, type FormEvent } from "react";
+import { clearParticipant, parseParticipant, readParticipantRaw, subscribeParticipant } from "@/lib/participant-storage";
 import { fieldErrors } from "@/lib/register-schema";
 import { verifySchema } from "@/lib/submit-schema";
 
@@ -17,8 +18,23 @@ type VerifyFormProps = {
 export default function VerifyForm({ onVerify, notice }: VerifyFormProps) {
   const emailId = useId();
   const codeId = useId();
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
+  // Details remembered in this browser (from registering, or an earlier verify here). Read after
+  // mount only: the server render and the first client render both see null.
+  const remembered = parseParticipant(useSyncExternalStore(subscribeParticipant, readParticipantRaw, () => null));
+  // What the participant has typed. Until they type, the fields show the remembered details.
+  const [typed, setTyped] = useState<Pair | null>(null);
+  const email = typed?.email ?? remembered?.email ?? "";
+  const code = typed?.code ?? remembered?.code ?? "";
+  const setEmail = (value: string) => setTyped({ email: value, code });
+  const setCode = (value: string) => setTyped({ email, code: value });
+
+  /** Empties the fields and forgets the details on this device. */
+  const clearRemembered = () => {
+    clearParticipant();
+    setTyped({ email: "", code: "" });
+    setErrors({});
+    setMessage("");
+  };
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
@@ -92,6 +108,12 @@ export default function VerifyForm({ onVerify, notice }: VerifyFormProps) {
           )}
         </div>
       </div>
+
+      {remembered && (
+        <button type="button" className="reg-link" onClick={clearRemembered}>
+          Not you? Clear saved details
+        </button>
+      )}
 
       {(message || notice) && (
         <p className="reg-error" role="alert">

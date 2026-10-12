@@ -678,6 +678,25 @@ body {
   outline-offset: 8px;
 }
 
+/* Slot for the phase-aware button (EventCta): every label is stacked in one grid cell, so the slot is
+   always as big as the widest one and swapping or hiding the button moves nothing around it. */
+.cta-slot {
+  display: inline-grid;
+  flex: none;
+  justify-items: center;
+  align-items: center;
+}
+.cta-slot > * {
+  grid-area: 1 / 1;
+}
+.cta-slot > .register {
+  min-height: 48px;
+}
+.cta-ghost {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ==========================================================================
    Loader
    ========================================================================== */

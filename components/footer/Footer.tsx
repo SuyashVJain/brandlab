@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import EventCta from "@/components/shared/EventCta";
 import TornEdge from "@/components/how-it-works/TornEdge";
 import { siteContent } from "@/lib/site-content";
 import "@/components/shared/shared.css";
@@ -17,13 +17,7 @@ export default function Footer() {
 
       <div className="sheet-inner">
         <div className="foot-cta">
-          <Link className="register" href="/register">
-            <span>{footer.register}</span>
-            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <circle cx="16" cy="16" r="14" />
-              <path d="M10 16h12M17 11l5 5-5 5" />
-            </svg>
-          </Link>
+          <EventCta />
         </div>
 
         <ul className="foot-logos">

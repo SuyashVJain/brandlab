@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import EventCta from "@/components/shared/EventCta";
 import { useEffect, useRef, useState } from "react";
 import { Crosshair, SectionTitle, TornPanel } from "@/components/shared/Paper";
 import { useScrollReveal } from "@/components/shared/useScrollReveal";
@@ -258,13 +258,7 @@ export default function Details() {
         {/* ---------- call to action ---------- */}
         <div className="details-cta" data-reveal-batch>
           <div data-reveal>
-            <Link className="register" href="/register">
-              <span>Register now</span>
-              <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <circle cx="16" cy="16" r="14" />
-                <path d="M10 16h12M17 11l5 5-5 5" />
-              </svg>
-            </Link>
+            <EventCta />
           </div>
         </div>
       </div>

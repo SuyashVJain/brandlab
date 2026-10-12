@@ -124,9 +124,17 @@ export const siteContent = {
     semesters: [1, 2, 3, 4, 5, 6, 7, 8],
   },
 
+  /**
+   * The brush-stroke button on the home page (hero, details and footer).
+   * "submit" replaces "register" while submissions are open; once they close there is no button.
+   */
+  cta: {
+    register: { label: "Register now", href: "/register" },
+    submit: { label: "Submit your entry", href: "/submit" },
+  },
+
   /** Footer labels. */
   footer: {
-    register: "Register now",
     contactHeading: "Contact",
   },
 
